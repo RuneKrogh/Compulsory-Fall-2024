@@ -1,10 +1,14 @@
 using System.Text.Json;
 using API.Middleware;
 using DataAccess;
+using DataAccess.Repositories;
 //using DataAccess.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Service;
+using Service.Implementations;
+using Service.Interfaces;
+
 //using Service.Validators;
 
 namespace API;
@@ -28,8 +32,22 @@ public class Program
             options.EnableSensitiveDataLogging();
         });
         //builder.Services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreatePatientValidator>());
-        //builder.Services.AddScoped<IHospitalRepository, HospitalRepository>();
-        //builder.Services.AddScoped<IHospitalService, HospitalService>();
+        
+        // Register repositories
+        builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+        builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+        builder.Services.AddScoped<IOrderEntryRepository, OrderEntryRepository>();
+        builder.Services.AddScoped<IPaperRepository, PaperRepository>();
+        builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
+        
+        // Register services
+        builder.Services.AddScoped<ICustomerService, CustomerService>();
+        builder.Services.AddScoped<IOrderService, OrderService>();
+        builder.Services.AddScoped<IOrderEntryService, OrderEntryService>();
+        builder.Services.AddScoped<IPaperService, PaperService>();
+        builder.Services.AddScoped<IPropertyService, PropertyService>();
+        
+        // Register controllers and Swagger
         builder.Services.AddControllers();
         builder.Services.AddOpenApiDocument();
 
@@ -39,14 +57,10 @@ public class Program
         Console.WriteLine("APP OPTIONS: " + JsonSerializer.Serialize(options));
 
         app.UseHttpsRedirection();
-
         app.UseRouting();
-
-
         app.UseOpenApi();
         app.UseSwaggerUi();
         app.UseStatusCodePages();
-
         app.UseCors(config => config.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
         app.UseMiddleware<RequestResponseLoggingMiddleware>();
 
