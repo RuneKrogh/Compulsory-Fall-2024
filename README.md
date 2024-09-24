@@ -41,7 +41,6 @@ npm run dev --prefix client
     - Success/Error Creating/Deleting/Updating Orders
     - Success/Error Creating/Deleting/Updating Customers
     - Success/Error Creating/Deleting/Updating Properties
-    - Success/Error Creating/Deleting/Updating Properties
 
 - User story requirements:
     - As a customer I want to be able to place an order with X order entries of products.
