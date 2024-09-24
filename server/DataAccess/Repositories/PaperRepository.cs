@@ -27,7 +27,7 @@ namespace DataAccess.Repositories
 
         public async Task<IEnumerable<Paper>> GetAllPapersAsync()
         {
-            return await _context.Papers.ToListAsync();
+            return await _context.Papers.OrderBy(p => p.Id).ToListAsync();
         }
 
         public async Task<Paper?> GetPaperByIdAsync(int id)

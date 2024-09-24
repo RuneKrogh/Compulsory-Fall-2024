@@ -32,12 +32,10 @@ export default function OrderList() {
             });
     }, [customers, setCustomers, setOrders]);
 
-
     const filteredOrders = orders.filter(order => {
         // @ts-ignore
         return order.id.toString().includes(searchQuery);
     });
-
 
     const indexOfLastOrder = currentPage * ordersPerPage;
     const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
@@ -45,38 +43,23 @@ export default function OrderList() {
 
     const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
 
-
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
-
 
     const getCustomerNameById = (customerId) => {
         const customer = customers.find(c => c.id === customerId);
         return customer ? customer.name : 'Unknown Customer';
     };
 
-
     const formatOrderDate = (dateString) => {
         const date = new Date(dateString);
-        const day = String(date.getUTCDate()).padStart(2, '0');
-        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-        const year = date.getUTCFullYear();
-        const hours = String(date.getUTCHours()).padStart(2, '0');
-        const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-        const seconds = String(date.getUTCSeconds()).padStart(2, '0');
-
-        return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+        return `${date.getUTCDate().toString().padStart(2, '0')}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-${date.getUTCFullYear()} ${date.getUTCHours().toString().padStart(2, '0')}:${date.getUTCMinutes().toString().padStart(2, '0')}:${date.getUTCSeconds().toString().padStart(2, '0')}`;
     };
-
 
     const formatDeliveryDate = (dateString) => {
         const date = new Date(dateString);
-        const day = String(date.getUTCDate()).padStart(2, '0');
-        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-        const year = date.getUTCFullYear();
-
-        return `${day}-${month}-${year}`;
+        return `${date.getUTCDate().toString().padStart(2, '0')}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-${date.getUTCFullYear()}`;
     };
 
     return (
@@ -122,9 +105,6 @@ export default function OrderList() {
                                         <button className="btn btn-sm">
                                             Edit
                                         </button>
-                                        <button className="btn btn-sm">
-                                            Delete
-                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -133,13 +113,11 @@ export default function OrderList() {
                     </table>
 
                     <div className="flex mt-4 justify-center">
-                        {Array.from({length: totalPages}, (_, index) => (
+                        {Array.from({ length: totalPages }, (_, index) => (
                             <button
                                 key={index + 1}
                                 onClick={() => handlePageChange(index + 1)}
-                                className={`mx-1 px-2 py-1 border rounded ${
-                                    currentPage === index + 1 ? 'bg-gray-700 text-white' : null
-                                }`}
+                                className={`mx-1 px-2 py-1 border rounded ${currentPage === index + 1 ? 'bg-gray-700 text-white' : null}`}
                             >
                                 {index + 1}
                             </button>

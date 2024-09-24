@@ -26,7 +26,7 @@ namespace DataAccess.Repositories
 
         public async Task<IEnumerable<Property>> GetAllPropertiesAsync()
         {
-            return await _context.Properties.ToListAsync();
+            return await _context.Properties.OrderBy(p => p.Id).ToListAsync();
         }
 
         public async Task<Property?> GetPropertyByIdAsync(int id)
