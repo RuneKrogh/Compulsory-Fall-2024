@@ -1,5 +1,3 @@
-// src/atoms.ts
 import { atom } from 'jotai';
-import { Order } from '../Api.ts'; // Adjust the import based on your structure
-
+import { Order } from '../Api.ts';
 export const ordersAtom = atom<Order[]>([]);

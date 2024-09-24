@@ -36,28 +36,39 @@ export default function CustomerList() {
         setCurrentPage(pageNumber);
     };
 
+    const handleAddCustomer = () => {
+        console.log("Add Customer button clicked");
+    };
+
     return (
         <div className="max-w-full overflow-x-auto p-1">
-            {/* Centering the title and search bar */}
             <div className="flex flex-col items-center mb-4">
                 <h1 className="text-2xl font-bold">Customers</h1>
-                <input
-                    type="text"
-                    placeholder="Search..."
-                    value={searchQuery}
-                    onChange={(e) => {
-                        setSearchQuery(e.target.value);
-                        setCurrentPage(1);
-                    }}
-                    className="input input-bordered input-sm w-full max-w-xs mt-2"
-                />
+                <div className="flex items-center my-4"> {}
+                    <input
+                        type="text"
+                        placeholder="Search..."
+                        value={searchQuery}
+                        onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                            setCurrentPage(1);
+                        }}
+                        className="input input-bordered input-sm w-full max-w-xs mr-2"
+                    />
+                    <button
+                        onClick={handleAddCustomer}
+                        className="btn btn-sm"
+                    >
+                        Add Customer
+                    </button>
+                </div>
             </div>
             {customers.length > 0 ? (
-                <div className="w-3/5 mx-auto"> {/* Set width to 70% and center it */}
+                <div className="w-3/5 mx-auto"> {}
                     <table className="table w-full">
                         <thead>
                         <tr>
-                            <th className="text-xl px-1 py-1 text-center">ID</th> {/* Centered text */}
+                            <th className="text-xl px-1 py-1 text-center">ID</th>
                             <th className="text-xl px-1 py-1 text-center">Name</th>
                             <th className="text-xl px-1 py-1 text-center">Email</th>
                             <th className="text-xl px-1 py-1 text-center">Phone</th>
@@ -69,20 +80,16 @@ export default function CustomerList() {
                         <tbody>
                         {displayedCustomers.map(customer => (
                             <tr key={customer.id}>
-                                <td className="px-1 py-1 text-center">{customer.id}</td> {/* Centered text */}
+                                <td className="px-1 py-1 text-center">{customer.id}</td>
                                 <td className="px-1 py-1 text-center">{customer.name}</td>
                                 <td className="px-1 py-1 text-center">{customer.email || 'N/A'}</td>
                                 <td className="px-1 py-1 text-center">{customer.phone || 'N/A'}</td>
                                 <td className="px-1 py-1 text-center">{customer.address || 'N/A'}</td>
                                 <td className="px-1 py-1 text-center">0</td>
-                                <td className="px-1 py-1 text-center"> {/* Center buttons */}
-                                    <div className="flex justify-center space-x-1"> {/* Adjusted alignment */}
-                                        <button className="btn btn-sm">
-                                            Edit
-                                        </button>
-                                        <button className="btn btn-sm">
-                                            Delete
-                                        </button>
+                                <td className="px-1 py-1 text-center">
+                                    <div className="flex justify-center space-x-1">
+                                        <button className="btn btn-sm">Edit</button>
+                                        <button className="btn btn-sm">Delete</button>
                                     </div>
                                 </td>
                             </tr>

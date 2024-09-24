@@ -31,14 +31,13 @@ export default function Navigation() {
     }, []);
 
     return (
-        <div className="navbar bg-base-200 h-16 min-h-[4rem] relative"> {/* Added relative positioning */}
+        <div className="navbar bg-base-200 h-16 min-h-[4rem] relative">
             <div className="flex-1">
                 <Link to="/" className="btn btn-ghost text-lg">
                     <FontAwesomeIcon icon={faHome} className="text-xl" />
                 </Link>
             </div>
             <div className="flex-none">
-                {/* Admin Dropdown */}
                 <div className="dropdown dropdown-end" ref={dropdownRef}>
                     <label
                         tabIndex={0}
@@ -50,13 +49,13 @@ export default function Navigation() {
                     {isDropdownOpen && (
                         <ul
                             tabIndex={0}
-                            className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-50" // Added z-index here
+                            className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-50"
                         >
                             <li>
                                 <Link
                                     to="/customers"
                                     className="hover:bg-gray-600"
-                                    onClick={closeDropdown}  // Close on click
+                                    onClick={closeDropdown}
                                 >
                                     Customers
                                 </Link>
@@ -65,7 +64,7 @@ export default function Navigation() {
                                 <Link
                                     to="/orders"
                                     className="hover:bg-gray-600"
-                                    onClick={closeDropdown}  // Close on click
+                                    onClick={closeDropdown}
                                 >
                                     Orders
                                 </Link>
@@ -74,7 +73,7 @@ export default function Navigation() {
                                 <Link
                                     to="/products-properties"
                                     className="hover:bg-gray-600"
-                                    onClick={closeDropdown}  // Close on click
+                                    onClick={closeDropdown}
                                 >
                                     Products & Properties
                                 </Link>

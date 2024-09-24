@@ -1,15 +1,14 @@
 import React from "react";
-import ProductsList from "../Lists/PapersList.tsx"; // Adjust the import path as needed
-import PropertiesList from "../Lists/PropertiesList.tsx"; // Adjust the import path as needed
-
+import ProductsList from "../Lists/PapersList.tsx";
+import PropertiesList from "../Lists/PropertiesList.tsx";
 export default function ProductsProperties() {
     return (
         <>
-            <div className="flex space-x-4"> {/* Flex container for side-by-side layout */}
-                <div className="flex-1"> {/* Allow ProductsList to take available space */}
+            <div className="flex space-x-4">
+                <div className="flex-1">
                     <ProductsList />
                 </div>
-                <div className="flex-1"> {/* Allow PropertiesList to take available space */}
+                <div className="flex-1">
                     <PropertiesList />
                 </div>
             </div>
