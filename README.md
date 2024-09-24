@@ -18,7 +18,8 @@ Start client
 npm run dev --prefix client
 ```
 
-
+## ??
+- Adding models for paper/property relation
 
 ## Missing Requirements
 - Server-side Data Validation
