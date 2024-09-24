@@ -1,6 +1,6 @@
 import React from "react";
-import ProductsList from "../Lists/PapersList.tsx";
-import PropertiesList from "../Lists/PropertiesList.tsx";
+import ProductsList from "../lists/PapersList.tsx";
+import PropertiesList from "../lists/PropertiesList.tsx";
 export default function ProductsProperties() {
     return (
         <>

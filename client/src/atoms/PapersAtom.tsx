@@ -1,4 +1,4 @@
 import { atom } from 'jotai';
-import {Paper} from '../Api.ts';
+import {Paper} from '../components/main/Api.ts';
 
 export const papersAtom = atom<Paper[]>([]);

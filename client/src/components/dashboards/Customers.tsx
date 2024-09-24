@@ -1,5 +1,5 @@
 import React from "react";
-import CustomerList from "../Lists/CustomerList.tsx";
+import CustomerList from "../lists/CustomerList.tsx";
 
 export default function Customers() {
     return (

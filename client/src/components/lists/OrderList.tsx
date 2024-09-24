@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { http } from "../../http.ts";
+import { http } from "../main/http.ts";
 import { useAtom } from "jotai";
 import { ordersAtom } from "../../atoms/OrderAtom.tsx";
 import { customersAtom } from "../../atoms/CustomerAtom.tsx";

@@ -1,3 +1,3 @@
 import { atom } from 'jotai';
-import { Order } from '../Api.ts';
+import { Order } from '../components/main/Api.ts';
 export const ordersAtom = atom<Order[]>([]);
