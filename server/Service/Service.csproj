@@ -12,6 +12,11 @@
 
    </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="DTOs\" />
+      <Folder Include="Validation\" />
+    </ItemGroup>
+
  
 
 </Project>

@@ -10,7 +10,6 @@ namespace DataAccess.Repositories
     {
         Task<IEnumerable<OrderEntry>> GetAllOrderEntriesAsync();
         Task<OrderEntry?> GetOrderEntryByIdAsync(int id);
-        Task<IEnumerable<OrderEntry>> GetOrderEntriesByOrderIdAsync(int orderId);
         Task AddOrderEntryAsync(OrderEntry orderEntry);
         Task UpdateOrderEntryAsync(OrderEntry orderEntry);
         Task DeleteOrderEntryAsync(int id);
@@ -33,11 +32,6 @@ namespace DataAccess.Repositories
         public async Task<OrderEntry?> GetOrderEntryByIdAsync(int id)
         {
             return await _context.OrderEntries.FindAsync(id);
-        }
-
-        public async Task<IEnumerable<OrderEntry>> GetOrderEntriesByOrderIdAsync(int orderId)
-        {
-            return await _context.OrderEntries.Where(oe => oe.OrderId == orderId).ToListAsync();
         }
 
         public async Task AddOrderEntryAsync(OrderEntry orderEntry)

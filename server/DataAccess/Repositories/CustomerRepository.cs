@@ -7,7 +7,6 @@ namespace DataAccess.Repositories
     {
         Task<IEnumerable<Customer>> GetAllCustomersAsync();
         Task<Customer?> GetCustomerByIdAsync(int id);
-        Task<Customer?> GetCustomerByEmailAsync(string email);
         Task AddCustomerAsync(Customer customer);
         Task UpdateCustomerAsync(Customer customer);
         Task DeleteCustomerAsync(int id);
@@ -30,11 +29,6 @@ namespace DataAccess.Repositories
         public async Task<Customer?> GetCustomerByIdAsync(int id)
         {
             return await _context.Customers.FindAsync(id);
-        }
-
-        public async Task<Customer?> GetCustomerByEmailAsync(string email)
-        {
-            return await _context.Customers.FirstOrDefaultAsync(c => c.Email == email);
         }
 
         public async Task AddCustomerAsync(Customer customer)
