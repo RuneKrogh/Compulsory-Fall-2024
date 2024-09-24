@@ -23,7 +23,7 @@ namespace DataAccess.Repositories
 
         public async Task<IEnumerable<Customer>> GetAllCustomersAsync()
         {
-            return await _context.Customers.ToListAsync();
+            return await _context.Customers.OrderBy(c => c.Id).ToListAsync();
         }
 
         public async Task<Customer?> GetCustomerByIdAsync(int id)

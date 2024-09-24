@@ -12,6 +12,8 @@
     "deploy": "npx firebase deploy --only hosting"
   },
   "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "daisyui": "^4.12.10",
     "jotai": "^2.9.3",
     "jotai-devtools": "^0.10.1",
