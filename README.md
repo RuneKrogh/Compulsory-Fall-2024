@@ -22,6 +22,7 @@ npm run dev --prefix client
 
 ## Missing Requirements
 - Server-side Data Validation
+- Data Transfer Objects
 - xUnit Tests
 - User story requirements:
     - As a customer I want to be able to place an order with X order entries of products.
