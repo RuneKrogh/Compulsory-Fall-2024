@@ -13,6 +13,15 @@ export default function OrderList() {
     const ordersPerPage = 15; // Number of orders per page
 
     useEffect(() => {
+        if (customers.length === 0) {
+            http.api.customerGetAllCustomers()
+                .then(response => {
+                    setCustomers(response.data);
+                })
+                .catch(error => {
+                    console.error('Error fetching customers:', error);
+                });
+        }
         // Fetch orders
         http.api.orderGetAllOrders()
             .then(response => {
@@ -73,64 +82,76 @@ export default function OrderList() {
 
     return (
         <div className="max-w-full overflow-x-auto p-1">
-            <div className="flex items-center">
-                <h1 className="text-3xl font-bold pr-4">List of Orders</h1>
-                    <input
-                        type="text"
-                        placeholder="Search by order ID..."
-                        value={searchQuery}
-                        onChange={(e) => {
-                            setSearchQuery(e.target.value);
-                            setCurrentPage(1); // Reset to page 1 whenever the search query changes
-                        }}
-                        className="input input-bordered input-sm w-full max-w-xs"
-                    />
-                </div>
-                {orders.length > 0 ? (
-                    <div>
-                        <table className="table">
-                            <thead>
-                            <tr>
-                                <th className="text-xl px-2 py-1.5">ID</th>
-                                <th className="text-xl px-2 py-1">Customer</th>
-                                <th className="text-xl px-2 py-1">Order Date</th>
-                                <th className="text-xl px-2 py-1">Delivery Date</th>
-                                <th className="text-xl px-2 py-1">Total Amount</th>
-                                <th className="text-xl px-2 py-1">Status</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {displayedOrders.map(order => (
-                                <tr key={order.id}>
-                                    <td className="px-2 py-1.5">{order.id}</td>
-                                    <td className="px-2 py-1">{getCustomerNameById(order.customerId)}</td>
-                                    <td className="px-2 py-1">{order.orderDate ? formatOrderDate(order.orderDate) : 'N/A'}</td>
-                                    <td className="px-2 py-1">{order.deliveryDate ? formatDeliveryDate(order.deliveryDate) : 'N/A'}</td>
-                                    <td className="px-2 py-1">{order.totalAmount ? `${order.totalAmount.toFixed(2)} DKK` : 'N/A'}</td>
-                                    <td className="px-2 py-1">{order.status}</td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
-
-                        {/* Pagination Controls */}
-                        <div className="flex mt-4">
-                            {Array.from({length: totalPages}, (_, index) => (
-                                <button
-                                    key={index + 1}
-                                    onClick={() => handlePageChange(index + 1)}
-                                    className={`mx-1 px-2.5 py-1 mb-4 -mt-2 border rounded ${
-                                        currentPage === index + 1 ? 'bg-gray-700 text-white' : null
-                                    }`}
-                                >
-                                    {index + 1}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                ) : (
-                    <p>Loading orders...</p>
-                )}
+            {/* Centering the title and search bar */}
+            <div className="flex flex-col items-center mb-4">
+                <h1 className="text-2xl font-bold">Orders</h1>
+                <input
+                    type="text"
+                    placeholder="Search by order ID..."
+                    value={searchQuery}
+                    onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        setCurrentPage(1); // Reset to page 1 whenever the search query changes
+                    }}
+                    className="input input-bordered input-sm w-full max-w-xs mt-2"
+                />
             </div>
-            );
+            {orders.length > 0 ? (
+                <div className="w-3/5 mx-auto"> {/* Set width to 60% and center it */}
+                    <table className="table w-full">
+                        <thead>
+                        <tr>
+                            <th className="text-xl px-1 py-1 text-center">ID</th>
+                            <th className="text-xl px-1 py-1 text-center">Customer</th>
+                            <th className="text-xl px-1 py-1 text-center">Order Date</th>
+                            <th className="text-xl px-1 py-1 text-center">Delivery Date</th>
+                            <th className="text-xl px-1 py-1 text-center">Total Amount</th>
+                            <th className="text-xl px-1 py-1 text-center">Status</th>
+                            <th className="text-xl px-1 py-1 text-center">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {displayedOrders.map(order => (
+                            <tr key={order.id}>
+                                <td className="px-1 py-1 text-center">{order.id}</td>
+                                <td className="px-1 py-1 text-center">{getCustomerNameById(order.customerId)}</td>
+                                <td className="px-1 py-1 text-center">{order.orderDate ? formatOrderDate(order.orderDate) : 'N/A'}</td>
+                                <td className="px-1 py-1 text-center">{order.deliveryDate ? formatDeliveryDate(order.deliveryDate) : 'N/A'}</td>
+                                <td className="px-1 py-1 text-center">{order.totalAmount ? `${order.totalAmount.toFixed(2)} DKK` : 'N/A'}</td>
+                                <td className="px-1 py-1 text-center">{order.status}</td>
+                                <td className="px-1 py-1 text-center"> {/* Center buttons */}
+                                    <div className="flex justify-center space-x-1"> {/* Adjusted alignment */}
+                                        <button className="btn btn-sm">
+                                            Edit
+                                        </button>
+                                        <button className="btn btn-sm">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+
+                    {/* Pagination Controls */}
+                    <div className="flex mt-4 justify-center">
+                        {Array.from({length: totalPages}, (_, index) => (
+                            <button
+                                key={index + 1}
+                                onClick={() => handlePageChange(index + 1)}
+                                className={`mx-1 px-2 py-1 border rounded ${
+                                    currentPage === index + 1 ? 'bg-gray-700 text-white' : null
+                                }`}
+                            >
+                                {index + 1}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            ) : (
+                <p>Loading orders...</p>
+            )}
+        </div>
+    );
 }

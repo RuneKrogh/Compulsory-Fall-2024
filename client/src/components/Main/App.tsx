@@ -6,7 +6,9 @@ import Navigation from "./Navigation.tsx";
 import {useAtom} from "jotai";
 import {ThemeAtom} from "../../atoms/ThemeAtom.tsx";
 import Home from "./Home.tsx";
-import AdminDashboard from "../Dashboards/AdminDashboard.tsx";
+import Customers from "../Dashboards/Customers.tsx";
+import Orders from "../Dashboards/Orders.tsx";
+import ProductsProperties from "../Dashboards/ProductsProperties.tsx";
 
 const App = () => {
 
@@ -24,9 +26,13 @@ const App = () => {
             <Route path="/" element={<Home/>}/>
             <Route path="/shopping-cart" element={null}/>
             <Route path="/customer-dashboard" element={null}/>
-            <Route path="/admin-dashboard" element={<AdminDashboard/>}/>
+
+
+            // Admin Stuff
+            <Route path="/customers" element={<Customers/>}/>
+            <Route path="/orders" element={<Orders/>}/>
+            <Route path="/products-properties" element={<ProductsProperties/>}/>
         </Routes>
-        <DevTools/>
 
     </>)
 }
