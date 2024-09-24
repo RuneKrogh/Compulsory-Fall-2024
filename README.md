@@ -22,8 +22,26 @@ npm run dev --prefix client
 
 ## Missing Requirements
 - Server-side Data Validation
+    - Validation for creating/updating products
+    - Validation for creating/updating orders
+    - Validation for creating/updating customers
+    - Validation for creating/updating properties
+      
 - Data Transfer Objects
+    - DTO for creating order (order entries)
+    - DTO for updating order (status)
+    - DTO for creating/updating customers (name, email, phone, address)
+    - DTO for creating products (name, stock, price, properties)
+    - DTO for updating products (name, stock, price, discontinued, properties)
+    - DTO for creating/updating properties (name)
+      
 - xUnit Tests
+    - Success/Error Creating/Deleting/Updating Products
+    - Success/Error Creating/Deleting/Updating Orders
+    - Success/Error Creating/Deleting/Updating Customers
+    - Success/Error Creating/Deleting/Updating Properties
+    - Success/Error Creating/Deleting/Updating Properties
+
 - User story requirements:
     - As a customer I want to be able to place an order with X order entries of products.
     - As a customer I want to be able to see my own order history.
