@@ -82,7 +82,7 @@ export default function PropertiesList() {
                             <button
                                 key={index + 1}
                                 onClick={() => handlePageChange(index + 1)}
-                                className={`mx-1 px-2.5 py-1 my-1 border rounded ${
+                                className={`mx-1 px-2.5 py-1 my-1 -mt-2 border rounded ${
                                     currentPage === index + 1 ? 'bg-gray-700 text-white' : null
                                 }`}
                             >
