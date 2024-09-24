@@ -17,7 +17,6 @@ const App = () => {
     }, [theme])
 
     return (<>
-
         <Navigation/>
         <Toaster position={"bottom-center"}/>
         <Routes>
