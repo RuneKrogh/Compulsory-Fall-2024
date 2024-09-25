@@ -28,13 +28,7 @@ npm run dev --prefix client
     - Validation for creating/updating customers
     - Validation for creating/updating properties
       
-- Data Transfer Objects
-    - DTO for creating order (order entries)
-    - DTO for updating order (status)
-    - DTO for creating/updating customers (name, email, phone, address)
-    - DTO for creating products (name, stock, price, properties)
-    - DTO for updating products (name, stock, price, discontinued, properties)
-    - DTO for creating/updating properties (name)
+- Data Transfer Objects (needs implementing)
       
 - xUnit Tests
     - Success/Error Creating/Deleting/Updating Products
