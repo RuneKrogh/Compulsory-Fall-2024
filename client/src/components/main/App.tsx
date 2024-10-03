@@ -9,6 +9,7 @@ import Home from "../dashboards/Home.tsx";
 import Customers from "../dashboards/Customers.tsx";
 import Orders from "../dashboards/Orders.tsx";
 import ProductsProperties from "../dashboards/ProductsProperties.tsx";
+import ShoppingCart from "../dashboards/ShoppingCart.tsx";
 
 const App = () => {
 
@@ -24,8 +25,9 @@ const App = () => {
         <Toaster position={"bottom-right"}/>
         <Routes>
             <Route path="/" element={<Home/>}/>
-            <Route path="/shopping-cart" element={null}/>
+            <Route path="/shopping-cart" element={<ShoppingCart/>}/>
             <Route path="/customer-dashboard" element={null}/>
+
 
 
             // Admin Stuff
