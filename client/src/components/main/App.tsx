@@ -5,7 +5,7 @@ import {DevTools} from "jotai-devtools";
 import Navigation from "./Navigation.tsx";
 import {useAtom} from "jotai";
 import {ThemeAtom} from "../../atoms/ThemeAtom.tsx";
-import Home from "./Home.tsx";
+import Home from "../dashboards/Home.tsx";
 import Customers from "../dashboards/Customers.tsx";
 import Orders from "../dashboards/Orders.tsx";
 import ProductsProperties from "../dashboards/ProductsProperties.tsx";
