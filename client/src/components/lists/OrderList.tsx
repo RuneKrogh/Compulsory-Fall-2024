@@ -4,6 +4,7 @@ import { useAtom } from "jotai";
 import { ordersAtom } from "../../atoms/OrderAtom.tsx";
 import { customersAtom } from "../../atoms/CustomerAtom.tsx";
 import { orderPageAtom } from "../../atoms/PageAtom.tsx";
+import Modal from "../modals/Modal.tsx";
 
 export default function OrderList() {
     const [orders, setOrders] = useAtom(ordersAtom);
@@ -11,6 +12,11 @@ export default function OrderList() {
     const [currentPage, setCurrentPage] = useAtom(orderPageAtom);
     const [searchQuery, setSearchQuery] = useState("");
     const ordersPerPage = 15;
+
+    // Modal-related states
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingOrderId, setEditingOrderId] = useState(null);
+    const [selectedStatus, setSelectedStatus] = useState("");
 
     useEffect(() => {
         if (customers.length === 0) {
@@ -62,6 +68,34 @@ export default function OrderList() {
         return `${date.getUTCDate().toString().padStart(2, '0')}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-${date.getUTCFullYear()}`;
     };
 
+    // Handle opening the modal and setting the current order to edit
+    const handleEditStatus = (order) => {
+        setEditingOrderId(order.id);
+        setSelectedStatus(order.status); // Pre-fill with current status
+        setIsModalOpen(true);
+    };
+
+    // Handle submitting the updated status
+    const handleModalSubmit = () => {
+        const updatedOrder = {
+            ...orders.find(order => order.id === editingOrderId),
+            status: selectedStatus,
+        };
+
+        // @ts-ignore
+        http.api.orderUpdateOrder(editingOrderId, updatedOrder)
+            .then(response => {
+                const updatedOrders = orders.map(order =>
+                    order.id === editingOrderId ? updatedOrder : order
+                );
+                setOrders(updatedOrders); // Update the orders state with the modified order
+                setIsModalOpen(false); // Close the modal
+            })
+            .catch(error => {
+                console.error('Error updating order status:', error);
+            });
+    };
+
     return (
         <div className="max-w-full overflow-x-auto p-1">
             <div className="flex flex-col items-center mb-4">
@@ -102,8 +136,8 @@ export default function OrderList() {
                                 <td className="px-1 py-1 text-center">{order.status}</td>
                                 <td className="px-1 py-1 text-center">
                                     <div className="flex justify-center space-x-1">
-                                        <button className="btn btn-sm">
-                                            Edit
+                                        <button className="btn btn-sm" onClick={() => handleEditStatus(order)}>
+                                            Edit Status
                                         </button>
                                     </div>
                                 </td>
@@ -117,7 +151,7 @@ export default function OrderList() {
                             <button
                                 key={index + 1}
                                 onClick={() => handlePageChange(index + 1)}
-                                className={`mx-1 px-2 py-1 border rounded ${currentPage === index + 1 ? 'bg-gray-700 text-white' : null}`}
+                                className={`mx-1 px-2 py-1 border rounded ${currentPage === index + 1 ? 'bg-gray-700 text-white' : ''}`}
                             >
                                 {index + 1}
                             </button>
@@ -127,6 +161,27 @@ export default function OrderList() {
             ) : (
                 <p>Loading orders...</p>
             )}
+
+            {/* Modal for editing order status */}
+            <Modal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSubmit={handleModalSubmit}
+                title="Edit Order Status"
+            >
+                <div>
+                    <label className="block mb-2">Order Status</label>
+                    <select
+                        value={selectedStatus}
+                        onChange={(e) => setSelectedStatus(e.target.value)}
+                        className="select select-bordered w-full mb-4"
+                    >
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </Modal>
         </div>
     );
 }
