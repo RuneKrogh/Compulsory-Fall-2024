@@ -18,8 +18,9 @@ Start client
 npm run dev --prefix client
 ```
 
-## ??
+## To-do
 - Adding backend for paper/property relation
+- Adding properties to the paper display
 
 ## Missing Requirements
 - Server-side Data Validation
