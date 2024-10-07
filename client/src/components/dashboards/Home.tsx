@@ -22,6 +22,7 @@ export default function Home() {
         }
     }, [papers, setPapers]);
 
+    // @ts-ignore
     const filteredProducts = papers.filter(paper =>
         paper.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -77,7 +78,7 @@ export default function Home() {
                     filteredProducts.map(paper => (
                         <div key={paper.id} className="card shadow-lg border rounded-md p-4">
                             <h2 className="text-lg font-semibold">{paper.name}</h2>
-                            <p className="text-gray-700">${paper.price.toFixed(2)}</p>
+                            <p className="text-gray-400">{paper.price.toFixed(2)} DKK </p>
                             <p className="text-gray-500">{paper.properties}</p>
 
                             {/* Quantity Input */}

@@ -4,10 +4,11 @@ import { useAtom } from "jotai";
 import { http } from "../main/http"; // Adjust the import path according to your project structure
 
 export default function ShoppingCart() {
-    const [cartItems, setCartItems] = useAtom(shoppingCartAtom);
+    const [cartItems, setCartItems] = useAtom<[]>(shoppingCartAtom); // Specify the type here
 
     // Remove an item from the cart
     const handleRemoveFromCart = (id) => {
+        // @ts-ignore
         setCartItems((prevItems) => prevItems.filter(item => item.id !== id));
         console.log(`Removed item with ID ${id} from cart.`);
     };
@@ -15,36 +16,45 @@ export default function ShoppingCart() {
     const handleCheckout = async () => {
         // Calculate total amount based on cart items
         const totalAmount = cartItems.reduce((total, item) => {
-            return total + (item.price * item.quantity); // Assuming each item has a price property
+            // @ts-ignore
+            return total + (item.price * item.quantity);
         }, 0);
 
+        // Create orderDate and deliveryDate
+        const orderDate = new Date();
+        const deliveryDate = new Date(orderDate);
+        deliveryDate.setDate(orderDate.getDate() + 3);
+
+        // Format deliveryDate to match DateOnly in backend (YYYY-MM-DD format)
+        const formattedDeliveryDate = deliveryDate.toISOString().split('T')[0];
+
         const order = {
-            orderDate: new Date().toISOString(), // Set the order date to current date
-            deliveryDate: null, // Set to null or a specific delivery date if required
-            status: "Pending", // The initial status of the order
-            totalAmount: totalAmount, // Total amount calculated from cart items
-            customerId: 1, // Assuming the customer ID is always 1
+            orderDate: orderDate.toISOString(), // Full date and time for order date
+            deliveryDate: formattedDeliveryDate, // Date only for delivery date
+            status: "pending", // Status
+            totalAmount: totalAmount, // Total amount
+            customerId: 1, // Provide valid customer ID or null if applicable
             orderEntries: cartItems.map(item => ({
-                quantity: item.quantity, // Quantity of each item in the cart
-                productId: item.id, // Ensure this matches your product's ID
-                // `id`, `orderId`, `order` and `product` are omitted as they will be handled on the server side
+                quantity: item.quantity,
+                productId: item.id, // Ensure you're passing the correct field for product ID
             })),
         };
 
         try {
-            // Send order to the backend
-            const response = await http.api.orderAddOrder(order); // Adjust this based on your API
-            console.log("Order placed successfully:", response.data);
-
             // Clear the cart after placing the order
             setCartItems([]);
+            // Send the order to the backend
+            const response = await http.api.orderAddOrder(order);
+            console.log("Order placed successfully:", response.data);
+
         } catch (error) {
-            console.error("Error placing order:", error);
+            if (error.response) {
+                console.error("Error response from server:", error.response.data);
+            } else {
+                console.error("Error placing order:", error);
+            }
         }
     };
-
-
-
 
     // Calculate total price of items in the cart
     const getTotalPrice = () => {
@@ -52,6 +62,7 @@ export default function ShoppingCart() {
         if (cartItems.length === 0) return "0.00";
         return cartItems.reduce((total, item) => {
             console.log(item); // Debug: Check the current item
+            // @ts-ignore
             return total + (item.price * item.quantity);
         }, 0).toFixed(2);
     };

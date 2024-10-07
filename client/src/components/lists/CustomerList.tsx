@@ -135,7 +135,6 @@ export default function CustomerList() {
                             <th className="text-xl px-1 py-1 text-center">Email</th>
                             <th className="text-xl px-1 py-1 text-center">Phone</th>
                             <th className="text-xl px-1 py-1 text-center">Address</th>
-                            <th className="text-xl px-1 py-1 text-center">Orders</th>
                             <th className="text-xl px-1 py-1 text-center">Actions</th>
                         </tr>
                         </thead>
@@ -147,7 +146,6 @@ export default function CustomerList() {
                                 <td className="px-1 py-1 text-center">{customer.email || 'N/A'}</td>
                                 <td className="px-1 py-1 text-center">{customer.phone || 'N/A'}</td>
                                 <td className="px-1 py-1 text-center">{customer.address || 'N/A'}</td>
-                                <td className="px-1 py-1 text-center">0</td>
                                 <td className="px-1 py-1 text-center">
                                     <div className="flex justify-center space-x-1">
                                         <button
