@@ -13,7 +13,8 @@
    </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="DTOs\" />
+      <Folder Include="DTOs\Delete\" />
+      <Folder Include="DTOs\Update\" />
       <Folder Include="Validation\" />
     </ItemGroup>
 

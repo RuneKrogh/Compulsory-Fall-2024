@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
-using DataAccess.Models;
+using Service.DTOs.Read;
+using Service.DTOs.Create;
 
 namespace API.Controllers
 {
@@ -16,32 +17,40 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Customer>>> GetAllCustomers()
+        public async Task<ActionResult<IEnumerable<CustomerDto>>> GetAllCustomers()
         {
             var customers = await _customerService.GetAllCustomersAsync();
-            return Ok(customers);
+            return Ok(customers); // Already sorted in the service
         }
-
+        
         [HttpGet("{id}")]
-        public async Task<ActionResult<Customer>> GetCustomerById(int id)
+        public async Task<ActionResult<CustomerDto>> GetCustomerById(int id)
         {
             var customer = await _customerService.GetCustomerByIdAsync(id);
-            if (customer == null) return NotFound();
-            return Ok(customer);
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(customer); // Directly return the CustomerDto
         }
 
         [HttpPost]
-        public async Task<ActionResult<Customer>> AddCustomer(Customer customer)
+        public async Task<ActionResult<CustomerDto>> CreateCustomer(CreateCustomerDto createCustomerDto)
         {
-            await _customerService.AddCustomerAsync(customer);
-            return CreatedAtAction(nameof(GetCustomerById), new { id = customer.Id }, customer);
+            // Call the service to create the customer
+            var createdCustomer = await _customerService.CreateCustomerAsync(createCustomerDto);
+
+            // Return the created customer with the generated ID
+            return CreatedAtAction(nameof(GetCustomerById), new { id = createdCustomer.Id }, createdCustomer);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCustomer(int id, Customer customer)
+        public async Task<IActionResult> UpdateCustomer(int id, CustomerDto customerDto)
         {
-            if (id != customer.Id) return BadRequest();
-            await _customerService.UpdateCustomerAsync(customer);
+            if (id != customerDto.Id) return BadRequest();
+
+            await _customerService.UpdateCustomerAsync(customerDto);
             return NoContent();
         }
 
