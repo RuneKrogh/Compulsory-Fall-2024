@@ -1,7 +1,6 @@
 import {Route, Routes} from "react-router-dom";
 import React, {useEffect} from "react";
 import {Toaster} from "react-hot-toast";
-import {DevTools} from "jotai-devtools";
 import Navigation from "./Navigation.tsx";
 import {useAtom} from "jotai";
 import {ThemeAtom} from "../../atoms/ThemeAtom.tsx";
@@ -10,8 +9,7 @@ import Customers from "../dashboards/Customers.tsx";
 import Orders from "../dashboards/Orders.tsx";
 import ProductsProperties from "../dashboards/ProductsProperties.tsx";
 import ShoppingCart from "../dashboards/ShoppingCart.tsx";
-import customer from "../dashboards/Customer.tsx";
-import Customer from "../dashboards/Customer.tsx";
+import OrderHistory from "../dashboards/OrderHistory.tsx";
 
 const App = () => {
 
@@ -28,7 +26,7 @@ const App = () => {
         <Routes>
             <Route path="/" element={<Home/>}/>
             <Route path="/shopping-cart" element={<ShoppingCart/>}/>
-            <Route path="/customer-dashboard" element={null}/>
+            <Route path="/customer-dashboard" element={<OrderHistory/>}/>
 
             // Admin Stuff
             <Route path="/customers" element={<Customers/>}/>
