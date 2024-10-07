@@ -8,7 +8,6 @@ using Service.Implementations;
 using Service.Interfaces;
 using DataAccess;
 using Service.Validation; // Ensure you're using the right namespace for CreateCustomerValidation
-using Xunit;
 
 namespace UnitTests
 {

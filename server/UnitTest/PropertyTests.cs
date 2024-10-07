@@ -5,10 +5,6 @@ using Service.DTOs.Create;
 using Service.DTOs.Read;
 using Service.Implementations;
 using Service.Validation.PropertyValidation;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace UnitTests
 {

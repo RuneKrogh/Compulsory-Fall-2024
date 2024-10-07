@@ -7,11 +7,11 @@
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-        <RootNamespace>UnitTest</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="coverlet.collector" Version="6.0.0"/>
+        <PackageReference Include="HotChocolate.Subscriptions.InMemory" Version="15.0.0-p.8" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.0-rc.1.24451.1" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0"/>
         <PackageReference Include="Moq" Version="4.20.72" />
@@ -24,9 +24,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\server\API\API.csproj" />
-      <ProjectReference Include="..\server\DataAccess\DataAccess.csproj" />
-      <ProjectReference Include="..\server\Service\Service.csproj" />
+      <ProjectReference Include="..\API\API.csproj" />
+      <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
+      <ProjectReference Include="..\Service\Service.csproj" />
     </ItemGroup>
 
 </Project>
