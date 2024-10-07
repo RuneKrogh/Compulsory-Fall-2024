@@ -1,43 +1,36 @@
 name: Continuous Integration
-
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
   pull_request:
-    branches:
-      - main
-
+    types: [opened, synchronize, reopened, closed]
+    branches: ["main"]
 jobs:
-  test:
+  client_test_job:
+    name: Client Side Test
     runs-on: ubuntu-latest
-
+    timeout-minutes: 15
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    # Setup .NET
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.x'
-
-    # Run .NET Tests
-    - name: Run .NET Tests
-      run: cd server && dotnet test  # Adjust the path to your test project
-
-    # Setup Node.js
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'  # Adjust to your required Node.js version
-
-    # Install React Dependencies
-    - name: Install React Dependencies
-      working-directory: client  # Assuming your React app is in the 'client' folder
-      run: npm install
-
-    # Run React Tests
-    - name: Run React Tests
-      working-directory: client  # Assuming your React app is in the 'client' folder
-      run: npm test -- --watchAll=false --coverage
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install dependencies
+        run: npm clean-install --prefix=client
+      - name: Build
+        run: npm run build --prefix=client
+      - name: Test
+        run: npm run test --prefix=client
+  server_test_job:
+    name: Server Side Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+      - name: Build
+        run: dotnet build
+      - name: Test
+        run: dotnet test
