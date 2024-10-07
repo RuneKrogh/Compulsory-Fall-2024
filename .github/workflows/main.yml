@@ -1,0 +1,21 @@
+name: Continuous Integration
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: ["main"]
+jobs:
+  server_test_job:
+    name: Server Side Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+      - name: Build
+        run: cd server && dotnet build
+      - name: Test
+        run: cd server && dotnet test 
