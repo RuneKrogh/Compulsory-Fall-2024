@@ -8,7 +8,10 @@
  * ## SOURCE: https://github.com/acacode/swagger-typescript-api ##
  * ---------------------------------------------------------------
  */
-
+export interface PaperStockDto {
+    id: number;  // The paper ID
+    stock: number;  // The quantity to be deducted or updated
+}
 export interface Customer {
   /** @format int32 */
   id?: number;
@@ -575,6 +578,23 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         format: "json",
         ...params,
       }),
+
+      /**
+       * No description
+       *
+       * @tags Paper
+       * @name PaperUpdateStock
+       * @request PATCH:/api/Paper/update-stock
+       */
+      paperUpdateStock: (data: PaperStockDto, params: RequestParams = {}) =>
+          this.request<void, any>({
+              path: `/api/Paper/update-stock`,
+              method: "PATCH",
+              body: data,
+              type: ContentType.Json,
+              format: "json",
+              ...params,
+          }),
 
     /**
      * No description

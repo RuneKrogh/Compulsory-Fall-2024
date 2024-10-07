@@ -9,7 +9,6 @@ export default function ShoppingCart() {
 
     // Remove an item from the cart
     const handleRemoveFromCart = (id: number) => {
-        // @ts-ignore
         setCartItems((prevItems) => {
             const updatedItems = prevItems.filter(item => item.id !== id);
             toast.success(`Removed item with ID ${id} from cart.`); // Show toast notification
@@ -21,42 +20,54 @@ export default function ShoppingCart() {
     const handleCheckout = async () => {
         // Calculate total amount based on cart items
         const totalAmount = cartItems.reduce((total, item) => {
-            // @ts-ignore
             return total + (item.price * item.quantity);
         }, 0);
 
-        // Create orderDate and deliveryDate
         const orderDate = new Date();
         const deliveryDate = new Date(orderDate);
         deliveryDate.setDate(orderDate.getDate() + 3);
 
-        // Format deliveryDate to match DateOnly in backend (YYYY-MM-DD format)
         const formattedDeliveryDate = deliveryDate.toISOString().split('T')[0];
 
         const order = {
-            orderDate: orderDate.toISOString(), // Full date and time for order date
-            deliveryDate: formattedDeliveryDate, // Date only for delivery date
-            status: "pending", // Status
-            totalAmount: totalAmount, // Total amount
-            customerId: 1, // Provide valid customer ID or null if applicable
+            orderDate: orderDate.toISOString(),
+            deliveryDate: formattedDeliveryDate,
+            status: "pending",
+            totalAmount: totalAmount,
+            customerId: 1, // Adjust as needed
             orderEntries: cartItems.map(item => ({
                 quantity: item.quantity,
-                productId: item.id, // Ensure you're passing the correct field for product ID
+                productId: item.id,
             })),
         };
 
         try {
-            toast.success("Order placed successfully!"); // Show toast notification
-            setCartItems([]); // Clear the cart after placing the order
-
-            // Send the order to the backend
+            // Place the order
             const response = await http.api.orderAddOrder(order);
             console.log("Order placed successfully:", response.data);
+            toast.success("Order placed successfully!");
+
+            // Update stock for each item in the cart
+            await Promise.all(cartItems.map(async item => {
+                await http.api.paperUpdateStock({
+                    id: item.id,
+                    stock: item.quantity
+                });
+            }));
+            console.log("Stock updated successfully.");
+
+            // Optionally: update stock in the cartItems state after successful update
+            setCartItems(cartItems.map(item => ({
+                ...item,
+                stock: item.stock - item.quantity // Update stock locally
+            })));
+
+            // Clear the cart
+            setCartItems([]);
 
         } catch (error) {
-            toast.error("Error placing order. Please try again."); // Show error toast
+            toast.error("Error placing order. Please try again.");
             if (error.response) {
-                // @ts-ignore
                 console.error("Error response from server:", error.response.data);
             } else {
                 console.error("Error placing order:", error);
@@ -64,13 +75,11 @@ export default function ShoppingCart() {
         }
     };
 
+
     // Calculate total price of items in the cart
     const getTotalPrice = () => {
-        // Check if cartItems is empty or not
         if (cartItems.length === 0) return "0.00";
         return cartItems.reduce((total, item) => {
-            console.log(item); // Debug: Check the current item
-            // @ts-ignore
             return total + (item.price * item.quantity);
         }, 0).toFixed(2);
     };

@@ -142,5 +142,17 @@ namespace Service.Implementations
                 await _context.SaveChangesAsync();
             }
         }
+        
+        public async Task UpdatePaperStock(PaperStockDto paperStockDto)
+        {
+            var paper = await _context.Papers.FindAsync(paperStockDto.Id);
+            if (paper != null)
+            {
+                paper.Stock -= paperStockDto.Stock; // Deduct stock based on the quantity sold
+
+                _context.Papers.Update(paper);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

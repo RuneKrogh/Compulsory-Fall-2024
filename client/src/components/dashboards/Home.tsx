@@ -18,16 +18,12 @@ export default function Home() {
     const [propertyFilter, setPropertyFilter] = useState<string>(""); // Single selection for property
 
     useEffect(() => {
-        if (papers.length === 0) {
-            http.api.paperGetAllPapers()
-                .then(response => {
-                    setPapers(response.data);
-                })
-                .catch(error => {
-                    console.error('Error fetching products:', error);
-                });
-        }
-    }, [papers, setPapers]);
+        http.api.paperGetAllPapers().then(response => {
+            setPapers(response.data);
+        }).catch(error => {
+            console.error('Error fetching products:', error);
+        });
+    }, []);
 
     // Filter products based on the search query, sort them, and apply additional filters
     const filteredProducts = papers
@@ -210,7 +206,7 @@ export default function Home() {
                                     min="1"
                                     value={quantities[paper.id] || 1}
                                     onChange={(e) => handleQuantityChange(paper.id, parseInt(e.target.value))}
-                                    className="input input-bordered w-16 mr-2"
+                                    className="input input-bordered w-3/12 mr-2"
                                 />
                             </div>
                         </div>

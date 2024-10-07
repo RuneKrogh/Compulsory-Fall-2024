@@ -60,5 +60,21 @@ namespace API.Controllers
             await _paperService.DeletePaper(id);
             return NoContent();
         }
+        
+        [HttpPatch("update-stock")]
+        public async Task<IActionResult> UpdatePaperStock([FromBody] PaperStockDto paperStockDto)
+        {
+            // Make sure the DTO is valid
+            if (paperStockDto == null || paperStockDto.Stock < 0)
+            {
+                return BadRequest("Invalid stock update data.");
+            }
+
+            // Call service to update the stock
+            await _paperService.UpdatePaperStock(paperStockDto);
+
+            return NoContent(); // Return a 204 status indicating success without a response body
+        }
+        
     }
 }
