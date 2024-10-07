@@ -1,8 +1,6 @@
 using System.Text.Json;
 using API.Middleware;
 using DataAccess;
-using DataAccess.Repositories;
-//using DataAccess.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Service;
@@ -32,13 +30,6 @@ public class Program
             options.EnableSensitiveDataLogging();
         });
         //builder.Services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreatePatientValidator>());
-        
-        // Register repositories
-        builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-        builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-        builder.Services.AddScoped<IOrderEntryRepository, OrderEntryRepository>();
-        builder.Services.AddScoped<IPaperRepository, PaperRepository>();
-        builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
         
         // Register services
         builder.Services.AddScoped<ICustomerService, CustomerService>();

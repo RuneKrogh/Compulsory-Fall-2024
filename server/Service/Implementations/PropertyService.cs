@@ -1,34 +1,54 @@
-﻿using DataAccess.Models;
-using DataAccess.Repositories;
+﻿using DataAccess;
+using DataAccess.Models;
 using Service.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
-namespace Service.Implementations;
-    
-public class PropertyService : IPropertyService
+namespace Service.Implementations
 {
-    private readonly IPropertyRepository _propertyRepository;
-    public PropertyService(IPropertyRepository propertyRepository)
+    public class PropertyService : IPropertyService
     {
-        _propertyRepository = propertyRepository;
-    }
-    public async Task<IEnumerable<Property>> GetAllPropertiesAsync()
-    {
-        return await _propertyRepository.GetAllPropertiesAsync();
-    }
-    public async Task<Property?> GetPropertyByIdAsync(int id)
-    {
-        return await _propertyRepository.GetPropertyByIdAsync(id);
-    }
-    public async Task AddPropertyAsync(Property property)
-    {
-        await _propertyRepository.AddPropertyAsync(property);
-    }
-    public async Task UpdatePropertyAsync(Property property)
-    {
-        await _propertyRepository.UpdatePropertyAsync(property);
-    }
-    public async Task DeletePropertyAsync(int id)
-    {
-        await _propertyRepository.DeletePropertyAsync(id);
+        private readonly DunderMifflinContext _context;
+
+        public PropertyService(DunderMifflinContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<IEnumerable<Property>> GetAllPropertiesAsync()
+        {
+            // Retrieves all properties from the database
+            return await _context.Properties.ToListAsync();
+        }
+
+        public async Task<Property?> GetPropertyByIdAsync(int id)
+        {
+            // Retrieves a specific property by ID
+            return await _context.Properties.FindAsync(id);
+        }
+
+        public async Task AddPropertyAsync(Property property)
+        {
+            // Adds a new property to the database
+            await _context.Properties.AddAsync(property);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdatePropertyAsync(Property property)
+        {
+            // Updates an existing property in the database
+            _context.Properties.Update(property);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeletePropertyAsync(int id)
+        {
+            // Deletes a property from the database by ID
+            var property = await _context.Properties.FindAsync(id);
+            if (property != null)
+            {
+                _context.Properties.Remove(property);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { http } from "../main/http"; // Adjust the import path according to your project structure
 import { papersAtom } from "../../atoms/PapersAtom"; // Atom for products
+import { shoppingCartAtom } from "../../atoms/ShoppingCartAtom"; // Atom for shopping cart
 import { useAtom } from "jotai";
 
 export default function Home() {
     const [papers, setPapers] = useAtom(papersAtom);
     const [searchQuery, setSearchQuery] = useState("");
-
-    // State to hold the quantities for each paper
     const [quantities, setQuantities] = useState<{ [key: number]: number }>({});
+    const [cartItems, setCartItems] = useAtom(shoppingCartAtom); // Use shopping cart atom
 
-    // Fetch products if the list is empty
     useEffect(() => {
         if (papers.length === 0) {
             http.api.paperGetAllPapers()
@@ -23,22 +22,39 @@ export default function Home() {
         }
     }, [papers, setPapers]);
 
-    // Filter products based on search query
     const filteredProducts = papers.filter(paper =>
         paper.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    // Handle adding to cart
-    function handleAddToCart(id: number | undefined): void {
+    const handleAddToCart = (id: number | undefined): void => {
         const quantity = quantities[id] || 1;
+
         if (quantity > 0) {
+            // Check if the item is already in the cart
+            const existingItem = cartItems.find(item => item.id === id);
+            if (existingItem) {
+                // Update quantity if item already exists
+                // @ts-ignore
+                setCartItems(prev => prev.map(item =>
+                    item.id === id ? { ...item, quantity: item.quantity + quantity } : item
+                ));
+            } else {
+                // Add new item to the cart
+                const paperToAdd = papers.find(paper => paper.id === id);
+                if (paperToAdd) {
+                    const newItem = { ...paperToAdd, quantity }; // Create a new order entry item
+                    setCartItems(prev => [...prev, newItem]); // Add new item to the cart
+                }
+            }
+
+            // Reset quantity for the item in the input
+            setQuantities(prev => ({ ...prev, [id]: 1 }));
             console.log(`Adding ${quantity} of paper ID ${id} to cart.`);
         } else {
             alert("Please enter a quantity greater than 0.");
         }
-    }
+    };
 
-    // Handle quantity change
     const handleQuantityChange = (id: number, value: number) => {
         setQuantities(prev => ({ ...prev, [id]: value }));
     };
@@ -75,7 +91,7 @@ export default function Home() {
                                 <input
                                     type="number"
                                     min="1"
-                                    value={quantities[paper.id] || 1} // Default to 1 if no quantity is set
+                                    value={quantities[paper.id] || 1}
                                     onChange={(e) => handleQuantityChange(paper.id, parseInt(e.target.value))}
                                     className="input input-bordered w-16 mr-2"
                                 />

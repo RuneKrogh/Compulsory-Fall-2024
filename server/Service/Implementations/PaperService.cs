@@ -1,45 +1,61 @@
-﻿using DataAccess.Models;
-using DataAccess.Repositories;
+﻿using DataAccess;
+using DataAccess.Models;
 using Service.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
-namespace Service.Implementations;
-
-public class PaperService : IPaperService
+namespace Service.Implementations
 {
-    private readonly IPaperRepository _paperRepository;
-
-    public PaperService(IPaperRepository paperRepository)
+    public class PaperService : IPaperService
     {
-        _paperRepository = paperRepository;
-    }
+        private readonly DunderMifflinContext _context;
 
-    public async Task<IEnumerable<Paper>> GetAllPapersAsync()
-    {
-        return await _paperRepository.GetAllPapersAsync();
-    }
+        public PaperService(DunderMifflinContext context)
+        {
+            _context = context;
+        }
 
-    public async Task<Paper?> GetPaperByIdAsync(int id)
-    {
-        return await _paperRepository.GetPaperByIdAsync(id);
-    }
+        public async Task<IEnumerable<Paper>> GetAllPapersAsync()
+        {
+            // Retrieves all papers from the database
+            return await _context.Papers.ToListAsync();
+        }
 
-    public async Task<Paper?> GetPaperByNameAsync(string name)
-    {
-        return await _paperRepository.GetPaperByNameAsync(name);
-    }
+        public async Task<Paper?> GetPaperByIdAsync(int id)
+        {
+            // Retrieves a specific paper by ID
+            return await _context.Papers.FindAsync(id);
+        }
 
-    public async Task AddPaperAsync(Paper paper)
-    {
-        await _paperRepository.AddPaperAsync(paper);
-    }
+        public async Task<Paper?> GetPaperByNameAsync(string name)
+        {
+            // Retrieves a specific paper by its name
+            return await _context.Papers
+                .FirstOrDefaultAsync(p => p.Name == name);
+        }
 
-    public async Task UpdatePaperAsync(Paper paper)
-    {
-        await _paperRepository.UpdatePaperAsync(paper);
-    }
+        public async Task AddPaperAsync(Paper paper)
+        {
+            // Adds a new paper to the database
+            await _context.Papers.AddAsync(paper);
+            await _context.SaveChangesAsync();
+        }
 
-    public async Task DeletePaperAsync(int id)
-    {
-        await _paperRepository.DeletePaperAsync(id);
+        public async Task UpdatePaperAsync(Paper paper)
+        {
+            // Updates an existing paper in the database
+            _context.Papers.Update(paper);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeletePaperAsync(int id)
+        {
+            // Deletes a paper from the database by ID
+            var paper = await _context.Papers.FindAsync(id);
+            if (paper != null)
+            {
+                _context.Papers.Remove(paper);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }
