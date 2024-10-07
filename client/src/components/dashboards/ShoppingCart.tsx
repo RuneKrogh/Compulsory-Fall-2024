@@ -72,11 +72,11 @@ export default function ShoppingCart() {
             <h1 className="text-2xl font-bold mb-4">Shopping Cart</h1>
             {cartItems.length > 0 ? (
                 <div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         {cartItems.map(item => (
                             <div key={item.id} className="card shadow-lg border rounded-md p-4">
                                 <h2 className="text-lg font-semibold">{item.name}</h2>
-                                <p className="text-gray-700">${item.price.toFixed(2)} x {item.quantity}</p>
+                                <p className="text-gray-300">DKK {item.price.toFixed(2)} x {item.quantity}</p>
                                 <button
                                     onClick={() => handleRemoveFromCart(item.id)}
                                     className="btn btn-danger mt-2"
@@ -87,10 +87,10 @@ export default function ShoppingCart() {
                         ))}
                     </div>
                     <div className="mt-4">
-                        <h2 className="text-xl font-semibold">Total: ${getTotalPrice()}</h2>
+                        <h2 className="text-xl font-semibold">Total: {getTotalPrice()} DKK</h2>
                         <button
                             onClick={handleCheckout}
-                            className="btn btn-primary mt-2"
+                            className="btn btn mt-2"
                         >
                             Checkout
                         </button>
