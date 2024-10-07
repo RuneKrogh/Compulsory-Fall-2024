@@ -24,16 +24,16 @@ npm run dev --prefix client
 
 ## Missing Requirements
 - Server-side Data Validation
-    - Validation for creating/updating products
-    - Validation for creating/updating orders
-    - Validation for creating/updating customers
-    - Validation for creating/updating properties
+    - ~~Validation for creating/updating products~~
+    - ~~Validation for creating/updating orders~~
+    - ~~Validation for creating/updating customers~~
+    - ~~Validation for creating/updating properties~~
       
 - xUnit Tests
-    - Success/Error Creating/Deleting/Updating Products
-    - Success/Error Creating/Deleting/Updating Orders
-    - Success/Error Creating/Deleting/Updating Customers
-    - Success/Error Creating/Deleting/Updating Properties
+    - ~~Success/Error Creating/Deleting/Updating Products~~
+    - ~~Success/Error Creating/Deleting/Updating Orders~~
+    - ~~Success/Error Creating/Deleting/Updating Customers~~
+    - ~~Success/Error Creating/Deleting/Updating Properties~~
 
 - User story requirements:
     - ~~As a customer I want to be able to place an order with X order entries of products.~~
