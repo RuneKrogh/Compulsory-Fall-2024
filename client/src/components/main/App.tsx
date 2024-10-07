@@ -10,6 +10,8 @@ import Customers from "../dashboards/Customers.tsx";
 import Orders from "../dashboards/Orders.tsx";
 import ProductsProperties from "../dashboards/ProductsProperties.tsx";
 import ShoppingCart from "../dashboards/ShoppingCart.tsx";
+import customer from "../dashboards/Customer.tsx";
+import Customer from "../dashboards/Customer.tsx";
 
 const App = () => {
 
@@ -27,8 +29,6 @@ const App = () => {
             <Route path="/" element={<Home/>}/>
             <Route path="/shopping-cart" element={<ShoppingCart/>}/>
             <Route path="/customer-dashboard" element={null}/>
-
-
 
             // Admin Stuff
             <Route path="/customers" element={<Customers/>}/>

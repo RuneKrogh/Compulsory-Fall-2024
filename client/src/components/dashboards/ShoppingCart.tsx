@@ -2,14 +2,19 @@ import React from "react";
 import { shoppingCartAtom } from "../../atoms/ShoppingCartAtom";
 import { useAtom } from "jotai";
 import { http } from "../main/http"; // Adjust the import path according to your project structure
+import toast from 'react-hot-toast'; // Import toast from react-hot-toast
 
 export default function ShoppingCart() {
-    const [cartItems, setCartItems] = useAtom<[]>(shoppingCartAtom); // Specify the type here
+    const [cartItems, setCartItems] = useAtom(shoppingCartAtom); // Specify the type here
 
     // Remove an item from the cart
     const handleRemoveFromCart = (id) => {
         // @ts-ignore
-        setCartItems((prevItems) => prevItems.filter(item => item.id !== id));
+        setCartItems((prevItems) => {
+            const updatedItems = prevItems.filter(item => item.id !== id);
+            toast.success(`Removed item with ID ${id} from cart.`); // Show toast notification
+            return updatedItems;
+        });
         console.log(`Removed item with ID ${id} from cart.`);
     };
 
@@ -41,13 +46,15 @@ export default function ShoppingCart() {
         };
 
         try {
-            // Clear the cart after placing the order
-            setCartItems([]);
+            toast.success("Order placed successfully!"); // Show toast notification
+            setCartItems([]); // Clear the cart after placing the order
+
             // Send the order to the backend
             const response = await http.api.orderAddOrder(order);
             console.log("Order placed successfully:", response.data);
 
         } catch (error) {
+            toast.error("Error placing order. Please try again."); // Show error toast
             if (error.response) {
                 console.error("Error response from server:", error.response.data);
             } else {
