@@ -1,0 +1,43 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Setup .NET
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.x'
+
+    # Run .NET Tests
+    - name: Run .NET Tests
+      run: cd server && dotnet test  
+
+    # Setup Node.js
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'  
+
+    # Install React Dependencies
+    - name: Install React Dependencies
+      working-directory: client  
+      run: npm install
+
+    # Run React Tests
+    - name: Run React Tests
+      working-directory: client  
+      run: npm test -- --watchAll=false --coverage
