@@ -1,6 +1,7 @@
 import React from "react";
 import ProductsList from "../lists/PapersList.tsx";
 import PropertiesList from "../lists/PropertiesList.tsx";
+
 export default function ProductsProperties() {
     return (
         <>

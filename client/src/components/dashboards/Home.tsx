@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { http } from "../main/http"; // Adjust the import path according to your project structure
-import { papersAtom } from "../../atoms/PapersAtom"; // Atom for products
-import { shoppingCartAtom } from "../../atoms/ShoppingCartAtom"; // Atom for shopping cart
-import { useAtom } from "jotai";
+import React, {useEffect, useState} from "react";
+import {http} from "../main/http"; // Adjust the import path according to your project structure
+import {papersAtom} from "../../atoms/PapersAtom"; // Atom for products
+import {shoppingCartAtom} from "../../atoms/ShoppingCartAtom"; // Atom for shopping cart
+import {useAtom} from "jotai";
 import toast from 'react-hot-toast'; // Import toast from react-hot-toast
 
 export default function Home() {

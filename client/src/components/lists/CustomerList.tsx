@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { http } from "../main/http.ts";
-import { customersAtom } from '../../atoms/CustomerAtom.tsx';
-import { useAtom } from "jotai";
-import { customerPageAtom } from "../../atoms/PageAtom.tsx";
+import React, {useEffect, useState} from "react";
+import {http} from "../main/http.ts";
+import {customersAtom} from '../../atoms/CustomerAtom.tsx';
+import {useAtom} from "jotai";
+import {customerPageAtom} from "../../atoms/PageAtom.tsx";
 import Modal from "../modals/Modal.tsx";
 
 export default function CustomerList() {

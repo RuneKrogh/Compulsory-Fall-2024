@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom/client'
 import App from "./App.tsx";
 import './styles.css';
-import React, {StrictMode} from "react";
+import React from "react";
 import 'jotai-devtools/styles.css';
 import {BrowserRouter} from "react-router-dom";
 

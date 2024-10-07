@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { http } from "../main/http.ts"; // Ensure you have this import
-import { Order} from "../main/Api.ts";
+import React, {useEffect, useState} from "react";
+import {http} from "../main/http.ts"; // Ensure you have this import
+import {Order} from "../main/Api.ts";
 
 export default function OrderHistory() {
     const [orders, setOrders] = useState<Order[]>([]);

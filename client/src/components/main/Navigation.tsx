@@ -1,8 +1,7 @@
-import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
-import ThemeSwitcher from "./ThemeSwitcher.tsx";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faHome, faShoppingCart, faUserTie } from '@fortawesome/free-solid-svg-icons';
+import {useEffect, useRef, useState} from "react";
+import {Link} from "react-router-dom";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faHome, faShoppingCart, faUser, faUserTie} from '@fortawesome/free-solid-svg-icons';
 
 export default function Navigation() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -16,7 +15,7 @@ export default function Navigation() {
         setIsDropdownOpen(false);
     };
 
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (event: { target: any; }) => {
         // @ts-ignore
         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
             closeDropdown();
@@ -49,11 +48,11 @@ export default function Navigation() {
                     {isDropdownOpen && (
                         <ul
                             tabIndex={0}
-                            className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-50"
+                            className="dropdown-content menu p-2 shadow bg-base-200 rounded-box w-52 z-50"
                         >
                             <li>
                                 <Link
-                                    to="/customers"
+                                    to={"/customers"}
                                     className="hover:bg-gray-600"
                                     onClick={closeDropdown}
                                 >
@@ -62,7 +61,7 @@ export default function Navigation() {
                             </li>
                             <li>
                                 <Link
-                                    to="/orders"
+                                    to={"/orders"}
                                     className="hover:bg-gray-600"
                                     onClick={closeDropdown}
                                 >
@@ -71,7 +70,7 @@ export default function Navigation() {
                             </li>
                             <li>
                                 <Link
-                                    to="/products-properties"
+                                    to={"/products-properties"}
                                     className="hover:bg-gray-600"
                                     onClick={closeDropdown}
                                 >
@@ -82,11 +81,11 @@ export default function Navigation() {
                     )}
                 </div>
 
-                <Link to="/customer-dashboard" className="btn btn-ghost text-lg">
+                <Link to={"/customer-dashboard"} className="btn btn-ghost text-lg">
                     <FontAwesomeIcon icon={faUser} className="text-xl" />
                 </Link>
 
-                <Link to="/shopping-cart" className="btn btn-ghost text-lg">
+                <Link to={"/shopping-cart"} className="btn btn-ghost text-lg">
                     <FontAwesomeIcon icon={faShoppingCart} className="text-xl" />
                 </Link>
             </div>

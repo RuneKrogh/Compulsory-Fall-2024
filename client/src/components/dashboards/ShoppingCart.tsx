@@ -1,7 +1,7 @@
 import React from "react";
-import { shoppingCartAtom } from "../../atoms/ShoppingCartAtom";
-import { useAtom } from "jotai";
-import { http } from "../main/http"; // Adjust the import path according to your project structure
+import {shoppingCartAtom} from "../../atoms/ShoppingCartAtom";
+import {useAtom} from "jotai";
+import {http} from "../main/http"; // Adjust the import path according to your project structure
 import toast from 'react-hot-toast'; // Import toast from react-hot-toast
 
 export default function ShoppingCart() {

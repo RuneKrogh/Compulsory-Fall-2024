@@ -1,4 +1,4 @@
-import { atom } from 'jotai';
+import {atom} from 'jotai';
 import {Paper} from "../components/main/Api.ts";
 
 // Define the cart items atom with a proper type
