@@ -14,33 +14,33 @@ namespace Service.Implementations
             _context = context;
         }
 
-        public async Task<IEnumerable<Property>> GetAllPropertiesAsync()
+        public async Task<IEnumerable<Property>> GetAllProperties()
         {
             // Retrieves all properties from the database
             return await _context.Properties.ToListAsync();
         }
 
-        public async Task<Property?> GetPropertyByIdAsync(int id)
+        public async Task<Property?> GetPropertyById(int id)
         {
             // Retrieves a specific property by ID
             return await _context.Properties.FindAsync(id);
         }
 
-        public async Task AddPropertyAsync(Property property)
+        public async Task CreateProperty(Property property)
         {
             // Adds a new property to the database
             await _context.Properties.AddAsync(property);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdatePropertyAsync(Property property)
+        public async Task UpdateProperty(Property property)
         {
             // Updates an existing property in the database
             _context.Properties.Update(property);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeletePropertyAsync(int id)
+        public async Task DeleteProperty(int id)
         {
             // Deletes a property from the database by ID
             var property = await _context.Properties.FindAsync(id);

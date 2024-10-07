@@ -7,18 +7,18 @@ namespace Service.Interfaces
     public interface ICustomerService
     {
         // Read: Retrieves all customers as DTOs
-        Task<IEnumerable<CustomerDto>> GetAllCustomersAsync();
+        Task<IEnumerable<CustomerDto>> GetAllCustomers();
         
         // Read: Retrieves a single customer by their ID as a DTO
-        Task<CustomerDto?> GetCustomerByIdAsync(int id);
+        Task<CustomerDto?> GetCustomerById(int id);
         
         // Create: Adds a new customer using the provided DTO
-        Task<CustomerDto> CreateCustomerAsync(CreateCustomerDto createCustomerDto);
+        Task<CustomerDto> CreateCustomer(CreateCustomerDto createCustomerDto);
         
         // Update: Updates an existing customer using the provided DTO
-        Task UpdateCustomerAsync(CustomerDto customerDto);
+        Task UpdateCustomer(CustomerDto customerDto);
         
         // Delete: Deletes a customer by their ID
-        Task DeleteCustomerAsync(int id);
+        Task DeleteCustomer(int id);
     }
 }

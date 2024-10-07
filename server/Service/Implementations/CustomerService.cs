@@ -16,7 +16,7 @@ namespace Service.Implementations
             _context = context;
         }
 
-        public async Task<IEnumerable<CustomerDto>> GetAllCustomersAsync()
+        public async Task<IEnumerable<CustomerDto>> GetAllCustomers()
         {
             // Retrieves all customers from the database and maps them to DTOs
             return await _context.Customers
@@ -32,7 +32,7 @@ namespace Service.Implementations
                 .ToListAsync();
         }
 
-        public async Task<CustomerDto?> GetCustomerByIdAsync(int id)
+        public async Task<CustomerDto?> GetCustomerById(int id)
         {
             // Retrieves a customer by their ID and maps it to DTO
             var customer = await _context.Customers.FindAsync(id);
@@ -41,7 +41,7 @@ namespace Service.Implementations
             return CustomerDto.FromCustomer(customer); // Use the mapping method from DTO
         }
 
-        public async Task<CustomerDto> CreateCustomerAsync(CreateCustomerDto createCustomerDto)
+        public async Task<CustomerDto> CreateCustomer(CreateCustomerDto createCustomerDto)
         {
             // Creates a new Customer object from the DTO
             var customer = new Customer
@@ -59,7 +59,7 @@ namespace Service.Implementations
             return CustomerDto.FromCustomer(customer);
         }
 
-        public async Task UpdateCustomerAsync(CustomerDto customerDto)
+        public async Task UpdateCustomer(CustomerDto customerDto)
         {
             // Updates an existing customer in the database using the DTO
             var customer = await _context.Customers.FindAsync(customerDto.Id);
@@ -74,7 +74,7 @@ namespace Service.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteCustomerAsync(int id)
+        public async Task DeleteCustomer(int id)
         {
             // Deletes a customer from the database
             var customer = await _context.Customers.FindAsync(id);

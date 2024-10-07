@@ -18,14 +18,14 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrderEntry>>> GetAllOrderEntries()
         {
-            var orderEntries = await _orderEntryService.GetAllOrderEntriesAsync();
+            var orderEntries = await _orderEntryService.GetAllOrderEntries();
             return Ok(orderEntries);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderEntry>> GetOrderEntryById(int id)
         {
-            var orderEntry = await _orderEntryService.GetOrderEntryByIdAsync(id);
+            var orderEntry = await _orderEntryService.GetOrderEntryById(id);
             if (orderEntry == null) return NotFound();
             return Ok(orderEntry);
         }
@@ -33,7 +33,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<OrderEntry>> AddOrderEntry(OrderEntry orderEntry)
         {
-            await _orderEntryService.AddOrderEntryAsync(orderEntry);
+            await _orderEntryService.CreateOrderEntry(orderEntry);
             return CreatedAtAction(nameof(GetOrderEntryById), new { id = orderEntry.Id }, orderEntry);
         }
 
@@ -41,14 +41,14 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateOrderEntry(int id, OrderEntry orderEntry)
         {
             if (id != orderEntry.Id) return BadRequest();
-            await _orderEntryService.UpdateOrderEntryAsync(orderEntry);
+            await _orderEntryService.UpdateOrderEntry(orderEntry);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrderEntry(int id)
         {
-            await _orderEntryService.DeleteOrderEntryAsync(id);
+            await _orderEntryService.DeleteOrderEntry(id);
             return NoContent();
         }
     }

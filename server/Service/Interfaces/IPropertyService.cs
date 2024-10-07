@@ -4,9 +4,9 @@ namespace Service.Interfaces;
 
 public interface IPropertyService
 {
-    Task<IEnumerable<Property>> GetAllPropertiesAsync();
-    Task<Property?> GetPropertyByIdAsync(int id);
-    Task AddPropertyAsync(Property property);
-    Task UpdatePropertyAsync(Property property);
-    Task DeletePropertyAsync(int id);
+    Task<IEnumerable<Property>> GetAllProperties();
+    Task<Property?> GetPropertyById(int id);
+    Task CreateProperty(Property property);
+    Task UpdateProperty(Property property);
+    Task DeleteProperty(int id);
 }

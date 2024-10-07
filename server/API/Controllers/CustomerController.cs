@@ -19,14 +19,14 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CustomerDto>>> GetAllCustomers()
         {
-            var customers = await _customerService.GetAllCustomersAsync();
+            var customers = await _customerService.GetAllCustomers();
             return Ok(customers); // Already sorted in the service
         }
         
         [HttpGet("{id}")]
         public async Task<ActionResult<CustomerDto>> GetCustomerById(int id)
         {
-            var customer = await _customerService.GetCustomerByIdAsync(id);
+            var customer = await _customerService.GetCustomerById(id);
             if (customer == null)
             {
                 return NotFound();
@@ -39,7 +39,7 @@ namespace API.Controllers
         public async Task<ActionResult<CustomerDto>> CreateCustomer(CreateCustomerDto createCustomerDto)
         {
             // Call the service to create the customer
-            var createdCustomer = await _customerService.CreateCustomerAsync(createCustomerDto);
+            var createdCustomer = await _customerService.CreateCustomer(createCustomerDto);
 
             // Return the created customer with the generated ID
             return CreatedAtAction(nameof(GetCustomerById), new { id = createdCustomer.Id }, createdCustomer);
@@ -50,14 +50,14 @@ namespace API.Controllers
         {
             if (id != customerDto.Id) return BadRequest();
 
-            await _customerService.UpdateCustomerAsync(customerDto);
+            await _customerService.UpdateCustomer(customerDto);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCustomer(int id)
         {
-            await _customerService.DeleteCustomerAsync(id);
+            await _customerService.DeleteCustomer(id);
             return NoContent();
         }
     }

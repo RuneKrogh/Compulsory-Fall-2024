@@ -18,22 +18,22 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Property>>> GetAllProperties()
         {
-            var properties = await _propertyService.GetAllPropertiesAsync();
+            var properties = await _propertyService.GetAllProperties();
             return Ok(properties);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Property>> GetPropertyById(int id)
         {
-            var property = await _propertyService.GetPropertyByIdAsync(id);
+            var property = await _propertyService.GetPropertyById(id);
             if (property == null) return NotFound();
             return Ok(property);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Property>> AddProperty(Property property)
+        public async Task<ActionResult<Property>> CreateProperty(Property property)
         {
-            await _propertyService.AddPropertyAsync(property);
+            await _propertyService.CreateProperty(property);
             return CreatedAtAction(nameof(GetPropertyById), new { id = property.Id }, property);
         }
 
@@ -41,14 +41,14 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateProperty(int id, Property property)
         {
             if (id != property.Id) return BadRequest();
-            await _propertyService.UpdatePropertyAsync(property);
+            await _propertyService.UpdateProperty(property);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProperty(int id)
         {
-            await _propertyService.DeletePropertyAsync(id);
+            await _propertyService.DeleteProperty(id);
             return NoContent();
         }
     }
