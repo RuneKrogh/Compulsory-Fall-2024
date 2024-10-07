@@ -1,19 +1,25 @@
 ﻿using DataAccess;
 using DataAccess.Models;
+using FluentValidation;
 using Service.Interfaces;
 using Service.DTOs.Read;
 using Service.DTOs.Create;
 using Microsoft.EntityFrameworkCore;
+using Service.Validation.PaperValidation;
 
 namespace Service.Implementations
 {
     public class PaperService : IPaperService
     {
         private readonly DunderMifflinContext _context;
+        private readonly CreatePaperValidation _createPaperValidation;
+        private readonly UpdatePaperValidation _updatePaperValidation;
 
-        public PaperService(DunderMifflinContext context)
+        public PaperService(DunderMifflinContext context, CreatePaperValidation createPaperValidation, UpdatePaperValidation updatePaperValidation)
         {
             _context = context;
+            _createPaperValidation = createPaperValidation;
+            _updatePaperValidation = updatePaperValidation;
         }
 
         public async Task<IEnumerable<PaperDto>> GetAllPapers()
@@ -62,6 +68,10 @@ namespace Service.Implementations
 
         public async Task<PaperDto> CreatePaper(CreatePaperDto createPaperDto)
         {
+            
+            await _createPaperValidation.ValidateAndThrowAsync(createPaperDto);
+            
+            
             // Creates a new paper from DTO
             var paper = new Paper
             {
@@ -80,6 +90,9 @@ namespace Service.Implementations
 
         public async Task UpdatePaper(PaperDto paperDto)
         {
+            
+            await _updatePaperValidation.ValidateAndThrowAsync(paperDto);
+            
             // Updates an existing paper using DTO
             var paper = await _context.Papers.FindAsync(paperDto.Id);
             if (paper != null)

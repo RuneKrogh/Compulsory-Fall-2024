@@ -1,19 +1,25 @@
 ﻿using DataAccess;
 using DataAccess.Models;
+using FluentValidation;
 using Service.Interfaces;
 using Service.DTOs.Create;
 using Service.DTOs.Read;
 using Microsoft.EntityFrameworkCore;
+using Service.Validation;
 
 namespace Service.Implementations
 {
     public class CustomerService : ICustomerService
     {
         private readonly DunderMifflinContext _context;
+        private readonly CreateCustomerValidation _createValidation;
+        private readonly UpdateCustomerValidation _updateValidation;
 
-        public CustomerService(DunderMifflinContext context)
+        public CustomerService(DunderMifflinContext context, CreateCustomerValidation createValidation, UpdateCustomerValidation updateValidation)
         {
             _context = context;
+            _createValidation = createValidation;
+            _updateValidation = updateValidation;
         }
 
         public async Task<IEnumerable<CustomerDto>> GetAllCustomers()
@@ -43,6 +49,9 @@ namespace Service.Implementations
 
         public async Task<CustomerDto> CreateCustomer(CreateCustomerDto createCustomerDto)
         {
+            
+            await _createValidation.ValidateAndThrowAsync(createCustomerDto);
+            
             // Creates a new Customer object from the DTO
             var customer = new Customer
             {
@@ -61,6 +70,10 @@ namespace Service.Implementations
 
         public async Task UpdateCustomer(CustomerDto customerDto)
         {
+            
+            // Validate the customerDto before updating
+            await _updateValidation.ValidateAndThrowAsync(customerDto);
+            
             // Updates an existing customer in the database using the DTO
             var customer = await _context.Customers.FindAsync(customerDto.Id);
             if (customer == null) return; // or handle the case appropriately

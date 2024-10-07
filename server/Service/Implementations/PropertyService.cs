@@ -1,18 +1,24 @@
 ﻿using DataAccess;
 using DataAccess.Models;
+using FluentValidation;
 using Service.Interfaces;
 using Service.DTOs.Read;
 using Service.DTOs.Create;
 using Microsoft.EntityFrameworkCore;
+using Service.Validation.PropertyValidation;
 
 namespace Service.Implementations
 {
     public class PropertyService : IPropertyService
     {
         private readonly DunderMifflinContext _context;
+        private readonly CreatePropertyValidation _createPropertyValidation;
+        private readonly UpdatePropertyValidation _updatePropertyValidation;
 
-        public PropertyService(DunderMifflinContext context)
+        public PropertyService(DunderMifflinContext context, CreatePropertyValidation createPropertyValidation, UpdatePropertyValidation updatePropertyValidation)
         {
+            _createPropertyValidation = createPropertyValidation;
+            _updatePropertyValidation = updatePropertyValidation;
             _context = context;
         }
 
@@ -42,6 +48,9 @@ namespace Service.Implementations
 
         public async Task<PropertyDto> CreateProperty(CreatePropertyDto createPropertyDto)
         {
+            
+            await _createPropertyValidation.ValidateAndThrowAsync(createPropertyDto);
+            
             // Creates a new property from DTO
             var property = new Property
             {
@@ -57,6 +66,9 @@ namespace Service.Implementations
 
         public async Task UpdateProperty(PropertyDto propertyDto)
         {
+            
+            await _updatePropertyValidation.ValidateAndThrowAsync(propertyDto);
+            
             // Updates an existing property using DTO
             var property = await _context.Properties.FindAsync(propertyDto.Id);
             if (property != null)

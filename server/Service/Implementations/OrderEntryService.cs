@@ -1,19 +1,23 @@
 ﻿using DataAccess;
 using DataAccess.Models;
+using FluentValidation;
 using Service.Interfaces;
 using Service.DTOs.Create;
 using Service.DTOs.Read;
 using Microsoft.EntityFrameworkCore;
+using Service.Validation.OrderEntryValidation;
 
 namespace Service.Implementations
 {
     public class OrderEntryService : IOrderEntryService
     {
         private readonly DunderMifflinContext _context;
+        private readonly CreateOrderEntryValidation _createOrderEntryValidation; // Add this line
 
-        public OrderEntryService(DunderMifflinContext context)
+        public OrderEntryService(DunderMifflinContext context, CreateOrderEntryValidation createOrderEntryValidation) // Update constructor
         {
             _context = context;
+            _createOrderEntryValidation = createOrderEntryValidation; // Initialize the validator
         }
 
         public async Task<IEnumerable<OrderEntryDto>> GetAllOrderEntries()
@@ -33,6 +37,9 @@ namespace Service.Implementations
 
         public async Task<OrderEntryDto> CreateOrderEntry(CreateOrderEntryDto createOrderEntryDto)
         {
+            
+            await _createOrderEntryValidation.ValidateAndThrowAsync(createOrderEntryDto);
+            
             // Creates a new OrderEntry based on the DTO
             var orderEntry = new OrderEntry
             {

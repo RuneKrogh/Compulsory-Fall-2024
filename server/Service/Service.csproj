@@ -12,10 +12,6 @@
 
    </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Validation\" />
-    </ItemGroup>
-
  
 
 </Project>

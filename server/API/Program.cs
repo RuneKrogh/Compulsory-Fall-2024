@@ -1,13 +1,13 @@
 using System.Text.Json;
 using API.Middleware;
 using DataAccess;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Service;
 using Service.Implementations;
 using Service.Interfaces;
-
-//using Service.Validators;
+using Service.Validation;
 
 namespace API;
 
@@ -29,7 +29,9 @@ public class Program
                               ?? appOptions.DbConnectionString);
             options.EnableSensitiveDataLogging();
         });
-        //builder.Services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreatePatientValidator>());
+        
+        
+        builder.Services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateCustomerValidation>());
         
         // Register services
         builder.Services.AddScoped<ICustomerService, CustomerService>();
@@ -40,6 +42,7 @@ public class Program
         
         // Register controllers and Swagger
         builder.Services.AddControllers();
+
         builder.Services.AddOpenApiDocument();
 
         var app = builder.Build();

@@ -1,6 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using DataAccess.Models;
 
 namespace Service.DTOs.Create
 {
@@ -19,5 +18,9 @@ namespace Service.DTOs.Create
         public double TotalAmount { get; set; }
 
         public int? CustomerId { get; set; } // Optional, to link to a customer
+
+        // Add this property to accept order entries
+        [Required]
+        public List<CreateOrderEntryDto> OrderEntries { get; set; } = new List<CreateOrderEntryDto>();
     }
 }
