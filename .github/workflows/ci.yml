@@ -24,20 +24,20 @@ jobs:
 
     # Run .NET Tests
     - name: Run .NET Tests
-      run: cd server && dotnet test  
+      run: cd server && dotnet test  # Adjust the path to your test project
 
     # Setup Node.js
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '18'  
+        node-version: '18'  # Adjust to your required Node.js version
 
     # Install React Dependencies
     - name: Install React Dependencies
-      working-directory: client  
+      working-directory: client  # Assuming your React app is in the 'client' folder
       run: npm install
 
     # Run React Tests
     - name: Run React Tests
-      working-directory: client  
+      working-directory: client  # Assuming your React app is in the 'client' folder
       run: npm test -- --watchAll=false --coverage
