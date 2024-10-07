@@ -8,9 +8,6 @@
       "DOM.Iterable"
     ],
     "module": "ESNext",
-    "compilerOptions": {
-      "noEmitOnError": false // This allows emitting files even if there are errors
-    },
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowUnusedLabels": true,
@@ -21,6 +18,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "noEmitOnError": false, // This allows emitting files even if there are errors
     "jsx": "react-jsx",
     /* Linting */
     "strict": false,
