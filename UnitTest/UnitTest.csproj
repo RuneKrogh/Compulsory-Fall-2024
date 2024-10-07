@@ -7,7 +7,6 @@
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-        <RootNamespace>TestProject1</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -19,6 +18,12 @@
 
     <ItemGroup>
         <Using Include="Xunit"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\server\API\API.csproj" />
+      <ProjectReference Include="..\server\DataAccess\DataAccess.csproj" />
+      <ProjectReference Include="..\server\Service\Service.csproj" />
     </ItemGroup>
 
 </Project>
