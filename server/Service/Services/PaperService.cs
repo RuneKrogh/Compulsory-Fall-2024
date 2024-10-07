@@ -24,8 +24,9 @@ namespace Service.Implementations
 
         public async Task<IEnumerable<PaperDto>> GetAllPapers()
         {
-            // Returns all papers as DTOs
+            // Returns all papers as DTOs, including linked properties
             return await _context.Papers
+                .Include(p => p.Properties) // Include the properties
                 .OrderBy(paper => paper.Id)
                 .Select(paper => new PaperDto
                 {
@@ -33,44 +34,69 @@ namespace Service.Implementations
                     Name = paper.Name,
                     Discontinued = paper.Discontinued,
                     Stock = paper.Stock,
-                    Price = paper.Price
+                    Price = paper.Price,
+                    Properties = paper.Properties.Select(prop => new PropertyDto
+                    {
+                        Id = prop.Id,
+                        PropertyName = prop.PropertyName
+                    }).ToList() // Map linked properties to PropertyDto
                 })
                 .ToListAsync();
         }
 
         public async Task<PaperDto?> GetPaperById(int id)
         {
-            // Returns a paper DTO by ID
-            var paper = await _context.Papers.FindAsync(id);
-            return paper != null ? new PaperDto
+            // Returns a paper DTO by ID, including linked properties
+            var paper = await _context.Papers
+                .Include(p => p.Properties) // Include the properties
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (paper == null)
+                return null;
+
+            return new PaperDto
             {
                 Id = paper.Id,
                 Name = paper.Name,
                 Discontinued = paper.Discontinued,
                 Stock = paper.Stock,
-                Price = paper.Price
-            } : null;
+                Price = paper.Price,
+                Properties = paper.Properties.Select(prop => new PropertyDto
+                {
+                    Id = prop.Id,
+                    PropertyName = prop.PropertyName
+                }).ToList() // Map linked properties to PropertyDto
+            };
         }
 
         public async Task<PaperDto?> GetPaperByName(string name)
         {
-            // Returns a paper DTO by name
-            var paper = await _context.Papers.FirstOrDefaultAsync(p => p.Name == name);
-            return paper != null ? new PaperDto
+            // Returns a paper DTO by name, including linked properties
+            var paper = await _context.Papers
+                .Include(p => p.Properties) // Include the properties
+                .FirstOrDefaultAsync(p => p.Name == name);
+
+            if (paper == null)
+                return null;
+
+            return new PaperDto
             {
                 Id = paper.Id,
                 Name = paper.Name,
                 Discontinued = paper.Discontinued,
                 Stock = paper.Stock,
-                Price = paper.Price
-            } : null;
+                Price = paper.Price,
+                Properties = paper.Properties.Select(prop => new PropertyDto
+                {
+                    Id = prop.Id,
+                    PropertyName = prop.PropertyName
+                }).ToList() // Map linked properties to PropertyDto
+            };
         }
 
         public async Task<PaperDto> CreatePaper(CreatePaperDto createPaperDto)
         {
-            
             await _createPaperValidation.ValidateAndThrowAsync(createPaperDto);
-            
             
             // Creates a new paper from DTO
             var paper = new Paper
@@ -90,7 +116,6 @@ namespace Service.Implementations
 
         public async Task UpdatePaper(PaperDto paperDto)
         {
-            
             await _updatePaperValidation.ValidateAndThrowAsync(paperDto);
             
             // Updates an existing paper using DTO

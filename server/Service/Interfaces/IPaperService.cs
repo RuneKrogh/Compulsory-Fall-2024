@@ -11,6 +11,6 @@ namespace Service.Interfaces
         Task<PaperDto?> GetPaperByName(string name);                  // Returns a paper entity by name
         Task<PaperDto> CreatePaper(CreatePaperDto createPaperDto);          // Creates a new paper from DTO
         Task UpdatePaper(PaperDto paperDto);                        // Updates an existing paper using DTO
-        Task DeletePaper(int id);                                   // Deletes a paper by ID
+        Task DeletePaper(int id);                                   // Deletes a paper by I
     }
 }

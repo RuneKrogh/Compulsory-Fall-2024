@@ -10,6 +10,8 @@ namespace Service.DTOs.Read
         public int Stock { get; set; }  // Stock level of the paper
         public double Price { get; set; }  // Price of the paper
 
+        public List<PropertyDto> Properties { get; set; } = new();  // List of linked properties
+
         // Method to map a Paper entity to a PaperDto
         public static PaperDto FromPaper(Paper paper)
         {
@@ -19,7 +21,12 @@ namespace Service.DTOs.Read
                 Name = paper.Name,
                 Discontinued = paper.Discontinued,
                 Stock = paper.Stock,
-                Price = paper.Price
+                Price = paper.Price,
+                Properties = paper.Properties.Select(p => new PropertyDto 
+                {
+                    Id = p.Id,
+                    PropertyName = p.PropertyName
+                }).ToList() // Map linked properties to PropertyDto
             };
         }
     }

@@ -20,9 +20,10 @@ namespace Service.Validation
 
             // Phone validation
             RuleFor(customer => customer.Phone)
-                .Matches(@"^\+?[0-9]{1,3}[-. ]?[0-9]{1,14}$")
-                .WithMessage("Phone number must be in a valid format, e.g., +45 1234 5678.")
+                .Matches(@"^\+?(?:[0-9] ?){1,4}[0-9]{1,14}$")
+                .WithMessage("Phone number must be in a valid format, e.g., +45 1234 5678 or 555-123-4567.")
                 .When(customer => !string.IsNullOrWhiteSpace(customer.Phone)); // Only validate if not null or empty
+
 
             // Email validation
             RuleFor(customer => customer.Email)

@@ -69,6 +69,7 @@ export interface OrderEntry {
 }
 
 export interface Paper {
+  quantity: number;
   /** @format int32 */
   id?: number;
   /**

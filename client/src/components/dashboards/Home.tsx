@@ -105,13 +105,24 @@ export default function Home() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {filteredProducts.length > 0 ? (
                     filteredProducts.map(paper => (
                         <div key={paper.id} className="card shadow-lg border rounded-md p-4">
                             <h2 className="text-lg font-semibold">{paper.name}</h2>
                             <p className="text-gray-300">{paper.price.toFixed(2)} DKK</p>
-                            <p className="text-gray-500">{paper.properties}</p>
+                            {/* Display properties */}
+                            <div className="mt-2">
+                                {paper.properties.length > 0 ? (
+                                    <ul className="list-disc list-inside text-gray-500">
+                                        {paper.properties.map(property => (
+                                            <li key={property.id}>{property.propertyName}</li> // Adjust based on your PropertyDto structure
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p className="text-gray-500">No properties available</p>
+                                )}
+                            </div>
                             <p className="text-gray-400">Stock: {paper.stock}</p> {/* Display stock info here */}
 
                             {/* Quantity Input */}
