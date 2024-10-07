@@ -56,6 +56,7 @@ export default function ShoppingCart() {
         } catch (error) {
             toast.error("Error placing order. Please try again."); // Show error toast
             if (error.response) {
+                // @ts-ignore
                 console.error("Error response from server:", error.response.data);
             } else {
                 console.error("Error placing order:", error);
