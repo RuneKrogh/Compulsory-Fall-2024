@@ -1,0 +1,75 @@
+name: CI Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: mydb
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U user"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '7.0'  # Adjust to your required .NET version
+
+    - name: Restore .NET Dependencies
+      run: dotnet restore ./server/server.csproj  # Adjust based on your project structure
+
+    - name: Build .NET Project
+      run: dotnet build ./server/server.csproj --configuration Release --no-restore
+
+    - name: Run .NET Tests
+      run: dotnet test ./server/server.csproj --no-build --verbosity normal
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '18'  # Adjust to your required Node.js version
+
+    - name: Install Client Dependencies
+      working-directory: ./client
+      run: npm install
+
+    - name: Build Client Project
+      working-directory: ./client
+      run: npm run build
+
+    - name: Run Client Tests
+      working-directory: ./client
+      run: npm test -- --watchAll=false --coverage
+
+    - name: Upload .NET Build Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: dotnet-build
+        path: ./server/bin/Release/net7.0/publish/
+
+    - name: Upload React Build Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: react-build
+        path: ./client/build/
