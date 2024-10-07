@@ -10,6 +10,7 @@ export default function Home() {
     const [searchQuery, setSearchQuery] = useState("");
     const [quantities, setQuantities] = useState<{ [key: number]: number }>({});
     const [cartItems, setCartItems] = useAtom(shoppingCartAtom); // Use shopping cart atom
+    const [sortOption, setSortOption] = useState("priceAsc"); // Default sort by price ascending
 
     useEffect(() => {
         if (papers.length === 0) {
@@ -23,22 +24,32 @@ export default function Home() {
         }
     }, [papers, setPapers]);
 
-    // @ts-ignore
+    // Filter products based on the search query and sort them
     const filteredProducts = papers.filter(paper =>
         paper.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    ).sort((a, b) => {
+        switch (sortOption) {
+            case 'priceAsc':
+                return a.price - b.price; // Sort by price ascending
+            case 'priceDesc':
+                return b.price - a.price; // Sort by price descending
+            case 'nameAsc':
+                return a.name.localeCompare(b.name); // Sort by name A-Z
+            case 'nameDesc':
+                return b.name.localeCompare(a.name); // Sort by name Z-A
+            default:
+                return 0;
+        }
+    });
 
     const handleAddToCart = (id: number | undefined): void => {
-        // @ts-ignore
         const quantity = quantities[id] || 1;
 
         if (quantity > 0) {
             // Check if the item is already in the cart
-            // @ts-ignore
             const existingItem = cartItems.find(item => item.id === id);
             if (existingItem) {
                 // Update quantity if item already exists
-                // @ts-ignore
                 setCartItems(prev => prev.map(item =>
                     item.id === id ? { ...item, quantity: item.quantity + quantity } : item
                 ));
@@ -48,7 +59,6 @@ export default function Home() {
                 const paperToAdd = papers.find(paper => paper.id === id);
                 if (paperToAdd) {
                     const newItem = { ...paperToAdd, quantity }; // Create a new order entry item
-                    // @ts-ignore
                     setCartItems(prev => [...prev, newItem]); // Add new item to the cart
                     toast.success(`Added ${quantity} of paper "${paperToAdd.name}" to the cart.`);
                 }
@@ -66,11 +76,12 @@ export default function Home() {
         setQuantities(prev => ({ ...prev, [id]: value }));
     };
 
-    // @ts-ignore
     return (
         <div className="max-w-full overflow-x-auto p-4">
             <div className="flex flex-col items-center mb-4">
                 <h1 className="text-2xl font-bold">Store Products</h1>
+
+                {/* Search Input */}
                 <input
                     type="text"
                     placeholder="Search for products..."
@@ -78,6 +89,20 @@ export default function Home() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="input input-bordered input-sm w-full max-w-md my-4"
                 />
+
+                {/* Sort Options */}
+                <div className="mb-4">
+                    <select
+                        value={sortOption}
+                        onChange={(e) => setSortOption(e.target.value)}
+                        className="select select-bordered w-full max-w-md"
+                    >
+                        <option value="priceAsc">Sort by Price (Low to High)</option>
+                        <option value="priceDesc">Sort by Price (High to Low)</option>
+                        <option value="nameAsc">Sort by Name (A-Z)</option>
+                        <option value="nameDesc">Sort by Name (Z-A)</option>
+                    </select>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
