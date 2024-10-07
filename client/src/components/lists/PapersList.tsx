@@ -11,10 +11,9 @@ export default function PapersList() {
     const papersPerPage = 15;
     const [searchQuery, setSearchQuery] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingPaper, setEditingPaper] = useState(null); // To edit existing paper
-    const [newPaper, setNewPaper] = useState({ name: "", stock: 0, price: 0, discontinued: false }); // Form data
+    const [editingPaper, setEditingPaper] = useState(null);
+    const [newPaper, setNewPaper] = useState({ name: "", stock: 0, price: 0, discontinued: false });
 
-    // Fetch papers if the list is empty
     useEffect(() => {
         if (papers.length === 0) {
             http.api.paperGetAllPapers()
@@ -27,7 +26,6 @@ export default function PapersList() {
         }
     }, [papers, setPapers]);
 
-    // Filter papers based on search query
     const filteredPapers = papers.filter(paper => {
         const fullName = `${paper.name} ${paper.id}`.toLowerCase();
         return fullName.includes(searchQuery.toLowerCase());
@@ -36,21 +34,18 @@ export default function PapersList() {
     const indexOfLastPaper = currentPage * papersPerPage;
     const indexOfFirstPaper = indexOfLastPaper - papersPerPage;
     const displayedPapers = filteredPapers.slice(indexOfFirstPaper, indexOfLastPaper);
-
     const totalPages = Math.ceil(filteredPapers.length / papersPerPage);
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
 
-    // Open the modal to add a new paper
     const handleAddPaper = () => {
         setNewPaper({ name: "", stock: 0, price: 0, discontinued: false });
         setEditingPaper(null);
         setIsModalOpen(true);
     };
 
-    // Open the modal to edit an existing paper
     const handleEditPaper = (paper) => {
         setNewPaper(paper);
         setEditingPaper(paper.id);
@@ -71,7 +66,6 @@ export default function PapersList() {
 
     const handleModalSubmit = () => {
         if (editingPaper) {
-            // Update existing paper
             http.api.paperUpdatePaper(editingPaper, newPaper)
                 .then(response => {
                     setPapers(papers.map(paper => paper.id === editingPaper ? { ...paper, ...newPaper } : paper));
@@ -81,7 +75,6 @@ export default function PapersList() {
                     console.error('Error updating paper:', error);
                 });
         } else {
-            // Add new paper
             http.api.paperAddPaper(newPaper)
                 .then(response => {
                     setPapers([...papers, response.data]);
@@ -121,6 +114,7 @@ export default function PapersList() {
                             <th className="text-xl px-1 py-1 text-center">Stock</th>
                             <th className="text-xl px-1 py-1 text-center">Price</th>
                             <th className="text-xl px-1 py-1 text-center">Discontinued</th>
+                            <th className="text-xl px-1 py-1 text-center">Properties</th> {/* New Column */}
                             <th className="text-xl px-1 py-1 text-center">Actions</th>
                         </tr>
                         </thead>
@@ -132,6 +126,13 @@ export default function PapersList() {
                                 <td className="px-1 py-1 text-center">{paper.stock}</td>
                                 <td className="px-1 py-1 text-center">{paper.price}</td>
                                 <td className="px-1 py-1 text-center">{paper.discontinued ? 'Yes' : 'No'}</td>
+                                <td className="px-1 py-1 text-center">
+                                    <ul>
+                                        {paper.properties && paper.properties.map((property) => (
+                                            <li key={property.id}>{property.propertyName}</li> // Displaying properties
+                                        ))}
+                                    </ul>
+                                </td>
                                 <td className="px-1 py-1 text-center">
                                     <div className="flex justify-center space-x-1">
                                         <button className="btn btn-sm" onClick={() => handleEditPaper(paper)}>Edit</button>
