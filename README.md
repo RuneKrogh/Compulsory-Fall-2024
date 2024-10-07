@@ -36,7 +36,7 @@ npm run dev --prefix client
     - Success/Error Creating/Deleting/Updating Properties
 
 - User story requirements:
-    - As a customer I want to be able to place an order with X order entries of products.
+    - ~~As a customer I want to be able to place an order with X order entries of products.~~
     - As a customer I want to be able to see my own order history.
     - ~~As a customer I want to have a product overview with~~ filtering, ordering ~~and full-text search preferences.~~
     - ~~As a business admin I want to create new products, discontinue products and restock products.~~
