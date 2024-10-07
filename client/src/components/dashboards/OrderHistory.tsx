@@ -40,7 +40,7 @@ export default function OrderHistory() {
                                 <td className="px-1 py-1 text-center">{order.id}</td>
                                 <td className="px-1 py-1 text-center">{new Date(order.orderDate).toLocaleDateString()}</td>
                                 <td className="px-1 py-1 text-center">{new Date(order.deliveryDate).toLocaleDateString()}</td>
-                                <td className="px-1 py-1 text-center">{order.totalAmount.toFixed(2)} DKK</td>
+                                <td className="px-1 py-1 text-center">{order.totalAmount.toFixed(2)}$</td>
                                 <td className="px-1 py-1 text-center">{order.status}</td>
                             </tr>
                         ))}

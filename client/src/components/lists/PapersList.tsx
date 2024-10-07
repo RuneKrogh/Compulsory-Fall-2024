@@ -36,7 +36,7 @@ export default function PapersList() {
     const displayedPapers = filteredPapers.slice(indexOfFirstPaper, indexOfLastPaper);
     const totalPages = Math.ceil(filteredPapers.length / papersPerPage);
 
-    const handlePageChange = (pageNumber) => {
+    const handlePageChange = (pageNumber: number | ((prev: number) => number)) => {
         setCurrentPage(pageNumber);
     };
 
@@ -66,6 +66,7 @@ export default function PapersList() {
 
     const handleModalSubmit = () => {
         if (editingPaper) {
+            // @ts-ignore
             http.api.paperUpdatePaper(editingPaper, newPaper)
                 .then(response => {
                     setPapers(papers.map(paper => paper.id === editingPaper ? { ...paper, ...newPaper } : paper));
@@ -75,6 +76,7 @@ export default function PapersList() {
                     console.error('Error updating paper:', error);
                 });
         } else {
+            // @ts-ignore
             http.api.paperAddPaper(newPaper)
                 .then(response => {
                     setPapers([...papers, response.data]);

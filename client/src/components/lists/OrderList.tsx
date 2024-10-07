@@ -132,7 +132,7 @@ export default function OrderList() {
                                 <td className="px-1 py-1 text-center">{getCustomerNameById(order.customerId)}</td>
                                 <td className="px-1 py-1 text-center">{order.orderDate ? formatOrderDate(order.orderDate) : 'N/A'}</td>
                                 <td className="px-1 py-1 text-center">{order.deliveryDate ? formatDeliveryDate(order.deliveryDate) : 'N/A'}</td>
-                                <td className="px-1 py-1 text-center">{order.totalAmount ? `${order.totalAmount.toFixed(2)} DKK` : 'N/A'}</td>
+                                <td className="px-1 py-1 text-center">{order.totalAmount ? `${order.totalAmount.toFixed(2)}$` : 'N/A'}</td>
                                 <td className="px-1 py-1 text-center">{order.status}</td>
                                 <td className="px-1 py-1 text-center">
                                     <div className="flex justify-center space-x-1">

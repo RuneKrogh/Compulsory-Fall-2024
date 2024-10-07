@@ -10,7 +10,12 @@ export default function Home() {
     const [searchQuery, setSearchQuery] = useState("");
     const [quantities, setQuantities] = useState<{ [key: number]: number }>({});
     const [cartItems, setCartItems] = useAtom(shoppingCartAtom); // Use shopping cart atom
-    const [sortOption, setSortOption] = useState("priceAsc"); // Default sort by price ascending
+    const [sortOption, setSortOption] = useState("nameAsc"); // Default sort by price ascending
+
+    // Filter states
+    const [sizeFilter, setSizeFilter] = useState<string>(""); // Single selection for size
+    const [colorFilter, setColorFilter] = useState<string>(""); // Single selection for color
+    const [propertyFilter, setPropertyFilter] = useState<string>(""); // Single selection for property
 
     useEffect(() => {
         if (papers.length === 0) {
@@ -24,23 +29,34 @@ export default function Home() {
         }
     }, [papers, setPapers]);
 
-    // Filter products based on the search query and sort them
-    const filteredProducts = papers.filter(paper =>
-        paper.name.toLowerCase().includes(searchQuery.toLowerCase())
-    ).sort((a, b) => {
-        switch (sortOption) {
-            case 'priceAsc':
-                return a.price - b.price; // Sort by price ascending
-            case 'priceDesc':
-                return b.price - a.price; // Sort by price descending
-            case 'nameAsc':
-                return a.name.localeCompare(b.name); // Sort by name A-Z
-            case 'nameDesc':
-                return b.name.localeCompare(a.name); // Sort by name Z-A
-            default:
-                return 0;
-        }
-    });
+    // Filter products based on the search query, sort them, and apply additional filters
+    const filteredProducts = papers
+        .filter(paper =>
+            paper.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+        .filter(paper =>
+            sizeFilter === "" || paper.name.startsWith(sizeFilter) // Filter by size
+        )
+        .filter(paper =>
+            colorFilter === "" || paper.name.toLowerCase().includes(colorFilter.toLowerCase()) // Filter by color
+        )
+        .filter(paper =>
+            propertyFilter === "" || paper.properties.some(p => p.propertyName.toLowerCase() === propertyFilter.toLowerCase()) // Filter by properties
+        )
+        .sort((a, b) => {
+            switch (sortOption) {
+                case 'priceAsc':
+                    return a.price - b.price; // Sort by price ascending
+                case 'priceDesc':
+                    return b.price - a.price; // Sort by price descending
+                case 'nameAsc':
+                    return a.name.localeCompare(b.name); // Sort by name A-Z
+                case 'nameDesc':
+                    return b.name.localeCompare(a.name); // Sort by name Z-A
+                default:
+                    return 0;
+            }
+        });
 
     const handleAddToCart = (id: number | undefined): void => {
         const quantity = quantities[id] || 1;
@@ -76,32 +92,87 @@ export default function Home() {
         setQuantities(prev => ({ ...prev, [id]: value }));
     };
 
+    // Reset function to clear filters and sorting
+    const handleResetFilters = () => {
+        setSizeFilter(""); // Reset size filter
+        setColorFilter(""); // Reset color filter
+        setPropertyFilter(""); // Reset property filter
+        setSortOption("nameAsc"); // Reset sort option
+        setSearchQuery(""); // Reset search query
+        setQuantities({}); // Reset quantities
+    };
+
     return (
         <div className="max-w-full overflow-x-auto p-4">
-            <div className="flex flex-col items-center mb-4">
-                <h1 className="text-2xl font-bold">Store Products</h1>
+            <h1 className="text-2xl font-bold mb-2 text-center">Store Products</h1>
 
+            <div className="flex justify-between items-center mb-4">
                 {/* Search Input */}
                 <input
                     type="text"
                     placeholder="Search for products..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="input input-bordered input-sm w-full max-w-md my-4"
+                    className="input input-bordered input-sm w-full max-w-md"
                 />
 
-                {/* Sort Options */}
-                <div className="mb-4">
+                {/* Filter and Sort Options Container */}
+                <div className="flex items-center gap-4">
+                    {/* Size Filter Dropdown */}
+                    <select
+                        value={sizeFilter}
+                        onChange={(e) => setSizeFilter(e.target.value)}
+                        className="select select-bordered"
+                    >
+                        <option value="">All Sizes</option>
+                        {['A1', 'A2', 'A3', 'A4', 'A5'].map(size => (
+                            <option key={size} value={size}>{size}</option>
+                        ))}
+                    </select>
+
+                    {/* Color Filter Dropdown */}
+                    <select
+                        value={colorFilter}
+                        onChange={(e) => setColorFilter(e.target.value)}
+                        className="select select-bordered"
+                    >
+                        <option value="">All Colors</option>
+                        {['White', 'Blue', 'Yellow', 'Green', 'Pink', 'Red', 'Black'].map(color => (
+                            <option key={color} value={color}>{color}</option>
+                        ))}
+                    </select>
+
+                    {/* Special Property Filter Dropdown */}
+                    <select
+                        value={propertyFilter}
+                        onChange={(e) => setPropertyFilter(e.target.value)}
+                        className="select select-bordered"
+                    >
+                        <option value="">All Properties</option>
+                        {['Waterproof', 'Biodegradable'].map(property => (
+                            <option key={property} value={property}>{property}</option>
+                        ))}
+                    </select>
+
+                    {/* Sort Options */}
                     <select
                         value={sortOption}
                         onChange={(e) => setSortOption(e.target.value)}
-                        className="select select-bordered w-full max-w-md"
+                        className="select select-bordered"
                     >
-                        <option value="priceAsc">Sort by Price (Low to High)</option>
-                        <option value="priceDesc">Sort by Price (High to Low)</option>
                         <option value="nameAsc">Sort by Name (A-Z)</option>
                         <option value="nameDesc">Sort by Name (Z-A)</option>
+                        <option value="priceAsc">Sort by Price (Low to High)</option>
+                        <option value="priceDesc">Sort by Price (High to Low)</option>
                     </select>
+
+                    {/* Reset Filters Button */}
+                    <button
+                        onClick={handleResetFilters}
+                        className="btn btn-outline"
+                    >
+                        Reset Filters
+                    </button>
                 </div>
             </div>
 

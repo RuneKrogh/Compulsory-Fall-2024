@@ -8,7 +8,7 @@ export default function ShoppingCart() {
     const [cartItems, setCartItems] = useAtom(shoppingCartAtom); // Specify the type here
 
     // Remove an item from the cart
-    const handleRemoveFromCart = (id) => {
+    const handleRemoveFromCart = (id: number) => {
         // @ts-ignore
         setCartItems((prevItems) => {
             const updatedItems = prevItems.filter(item => item.id !== id);
@@ -98,8 +98,7 @@ export default function ShoppingCart() {
                         <h2 className="text-xl font-semibold">Total: {getTotalPrice()}$</h2>
                         <button
                             onClick={handleCheckout}
-                            className="btn btn mt-2"
-                        >
+                            className="btn mt-2">
                             Checkout
                         </button>
                     </div>
