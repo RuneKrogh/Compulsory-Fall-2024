@@ -6,202 +6,201 @@ using Service.DTOs.Read;
 using Service.Implementations;
 using Service.Validation.PaperValidation;
 
-namespace UnitTests
+namespace UnitTests;
+
+public class PaperServiceTests : IDisposable
 {
-    public class PaperServiceTests : IDisposable
+    private readonly DunderMifflinContext _context;
+    private readonly CreatePaperValidation _createPaperValidation;
+    private readonly PaperService _paperService;
+    private readonly UpdatePaperValidation _updatePaperValidation;
+
+    public PaperServiceTests()
     {
-        private readonly DunderMifflinContext _context;
-        private readonly PaperService _paperService;
-        private readonly CreatePaperValidation _createPaperValidation;
-        private readonly UpdatePaperValidation _updatePaperValidation;
+        var options = new DbContextOptionsBuilder<DunderMifflinContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
 
-        public PaperServiceTests()
+        _context = new DunderMifflinContext(options);
+        _createPaperValidation = new CreatePaperValidation();
+        _updatePaperValidation = new UpdatePaperValidation();
+        _paperService = new PaperService(_context, _createPaperValidation, _updatePaperValidation);
+    }
+
+    public void Dispose()
+    {
+        _context.Database.EnsureDeleted();
+        _context.Dispose();
+    }
+
+    [Fact]
+    public async Task CreatePaper_ValidData_ShouldCreatePaper()
+    {
+        // Arrange
+        var createPaperDto = new CreatePaperDto
         {
-            var options = new DbContextOptionsBuilder<DunderMifflinContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
+            Name = "A4 Paper",
+            Discontinued = false,
+            Stock = 100,
+            Price = 10.50
+        };
 
-            _context = new DunderMifflinContext(options);
-            _createPaperValidation = new CreatePaperValidation();
-            _updatePaperValidation = new UpdatePaperValidation();
-            _paperService = new PaperService(_context, _createPaperValidation, _updatePaperValidation);
-        }
+        // Act
+        var paperDto = await _paperService.CreatePaper(createPaperDto);
 
-        public void Dispose()
+        // Assert
+        Assert.NotNull(paperDto);
+        Assert.Equal("A4 Paper", paperDto.Name);
+        Assert.Equal(100, paperDto.Stock);
+        Assert.Equal(10.50, paperDto.Price);
+    }
+
+    [Fact]
+    public async Task CreatePaper_InvalidData_ShouldThrowValidationException()
+    {
+        // Arrange
+        var createPaperDto = new CreatePaperDto
         {
-            _context.Database.EnsureDeleted();
-            _context.Dispose();
-        }
+            Name = "", // Invalid name
+            Discontinued = false,
+            Stock = 100,
+            Price = 10.50
+        };
 
-        [Fact]
-        public async Task CreatePaper_ValidData_ShouldCreatePaper()
+        // Act & Assert
+        await Assert.ThrowsAsync<ValidationException>(async () => await _paperService.CreatePaper(createPaperDto));
+    }
+
+    [Fact]
+    public async Task GetAllPapers_ShouldReturnAllPapers()
+    {
+        // Arrange
+        await _paperService.CreatePaper(new CreatePaperDto
         {
-            // Arrange
-            var createPaperDto = new CreatePaperDto
-            {
-                Name = "A4 Paper",
-                Discontinued = false,
-                Stock = 100,
-                Price = 10.50
-            };
-
-            // Act
-            var paperDto = await _paperService.CreatePaper(createPaperDto);
-
-            // Assert
-            Assert.NotNull(paperDto);
-            Assert.Equal("A4 Paper", paperDto.Name);
-            Assert.Equal(100, paperDto.Stock);
-            Assert.Equal(10.50, paperDto.Price);
-        }
-
-        [Fact]
-        public async Task CreatePaper_InvalidData_ShouldThrowValidationException()
+            Name = "A4 Paper",
+            Discontinued = false,
+            Stock = 100,
+            Price = 10.50
+        });
+        await _paperService.CreatePaper(new CreatePaperDto
         {
-            // Arrange
-            var createPaperDto = new CreatePaperDto
-            {
-                Name = "", // Invalid name
-                Discontinued = false,
-                Stock = 100,
-                Price = 10.50
-            };
+            Name = "A5 Paper",
+            Discontinued = true,
+            Stock = 50,
+            Price = 5.00
+        });
 
-            // Act & Assert
-            await Assert.ThrowsAsync<ValidationException>(async () => await _paperService.CreatePaper(createPaperDto));
-        }
+        // Act
+        var papers = await _paperService.GetAllPapers();
 
-        [Fact]
-        public async Task GetAllPapers_ShouldReturnAllPapers()
+        // Assert
+        Assert.Equal(2, papers.Count());
+    }
+
+    [Fact]
+    public async Task GetPaperById_ExistingId_ShouldReturnPaper()
+    {
+        // Arrange
+        var createdPaper = await _paperService.CreatePaper(new CreatePaperDto
         {
-            // Arrange
-            await _paperService.CreatePaper(new CreatePaperDto
-            {
-                Name = "A4 Paper",
-                Discontinued = false,
-                Stock = 100,
-                Price = 10.50
-            });
-            await _paperService.CreatePaper(new CreatePaperDto
-            {
-                Name = "A5 Paper",
-                Discontinued = true,
-                Stock = 50,
-                Price = 5.00
-            });
+            Name = "A4 Paper",
+            Discontinued = false,
+            Stock = 100,
+            Price = 10.50
+        });
 
-            // Act
-            var papers = await _paperService.GetAllPapers();
+        // Act
+        var paper = await _paperService.GetPaperById(createdPaper.Id);
 
-            // Assert
-            Assert.Equal(2, papers.Count());
-        }
+        // Assert
+        Assert.NotNull(paper);
+        Assert.Equal(createdPaper.Id, paper.Id);
+    }
 
-        [Fact]
-        public async Task GetPaperById_ExistingId_ShouldReturnPaper()
+    [Fact]
+    public async Task UpdatePaper_ValidData_ShouldUpdatePaper()
+    {
+        // Arrange
+        var createdPaper = await _paperService.CreatePaper(new CreatePaperDto
         {
-            // Arrange
-            var createdPaper = await _paperService.CreatePaper(new CreatePaperDto
-            {
-                Name = "A4 Paper",
-                Discontinued = false,
-                Stock = 100,
-                Price = 10.50
-            });
+            Name = "A4 Paper",
+            Discontinued = false,
+            Stock = 100,
+            Price = 10.50
+        });
 
-            // Act
-            var paper = await _paperService.GetPaperById(createdPaper.Id);
-
-            // Assert
-            Assert.NotNull(paper);
-            Assert.Equal(createdPaper.Id, paper.Id);
-        }
-
-        [Fact]
-        public async Task UpdatePaper_ValidData_ShouldUpdatePaper()
+        var updatedPaperDto = new PaperDto
         {
-            // Arrange
-            var createdPaper = await _paperService.CreatePaper(new CreatePaperDto
-            {
-                Name = "A4 Paper",
-                Discontinued = false,
-                Stock = 100,
-                Price = 10.50
-            });
+            Id = createdPaper.Id,
+            Name = "A4 Premium Paper",
+            Discontinued = false,
+            Stock = 150,
+            Price = 12.00
+        };
 
-            var updatedPaperDto = new PaperDto
-            {
-                Id = createdPaper.Id,
-                Name = "A4 Premium Paper",
-                Discontinued = false,
-                Stock = 150,
-                Price = 12.00
-            };
+        // Act
+        await _paperService.UpdatePaper(updatedPaperDto);
+        var updatedPaper = await _paperService.GetPaperById(createdPaper.Id);
 
-            // Act
-            await _paperService.UpdatePaper(updatedPaperDto);
-            var updatedPaper = await _paperService.GetPaperById(createdPaper.Id);
+        // Assert
+        Assert.Equal("A4 Premium Paper", updatedPaper.Name);
+        Assert.Equal(150, updatedPaper.Stock);
+        Assert.Equal(12.00, updatedPaper.Price);
+    }
 
-            // Assert
-            Assert.Equal("A4 Premium Paper", updatedPaper.Name);
-            Assert.Equal(150, updatedPaper.Stock);
-            Assert.Equal(12.00, updatedPaper.Price);
-        }
-
-        [Fact]
-        public async Task UpdatePaper_InvalidData_ShouldThrowValidationException()
+    [Fact]
+    public async Task UpdatePaper_InvalidData_ShouldThrowValidationException()
+    {
+        // Arrange
+        var createdPaper = await _paperService.CreatePaper(new CreatePaperDto
         {
-            // Arrange
-            var createdPaper = await _paperService.CreatePaper(new CreatePaperDto
-            {
-                Name = "A4 Paper",
-                Discontinued = false,
-                Stock = 100,
-                Price = 10.50
-            });
+            Name = "A4 Paper",
+            Discontinued = false,
+            Stock = 100,
+            Price = 10.50
+        });
 
-            var updatedPaperDto = new PaperDto
-            {
-                Id = createdPaper.Id,
-                Name = "", // Invalid name
-                Discontinued = false,
-                Stock = 150,
-                Price = 12.00
-            };
-
-            // Act & Assert
-            await Assert.ThrowsAsync<ValidationException>(async () => await _paperService.UpdatePaper(updatedPaperDto));
-        }
-
-        [Fact]
-        public async Task DeletePaper_ExistingId_ShouldRemovePaper()
+        var updatedPaperDto = new PaperDto
         {
-            // Arrange
-            var createdPaper = await _paperService.CreatePaper(new CreatePaperDto
-            {
-                Name = "A4 Paper",
-                Discontinued = false,
-                Stock = 100,
-                Price = 10.50
-            });
+            Id = createdPaper.Id,
+            Name = "", // Invalid name
+            Discontinued = false,
+            Stock = 150,
+            Price = 12.00
+        };
 
-            // Act
-            await _paperService.DeletePaper(createdPaper.Id);
-            var deletedPaper = await _paperService.GetPaperById(createdPaper.Id);
+        // Act & Assert
+        await Assert.ThrowsAsync<ValidationException>(async () => await _paperService.UpdatePaper(updatedPaperDto));
+    }
 
-            // Assert
-            Assert.Null(deletedPaper);
-        }
-
-        [Fact]
-        public async Task DeletePaper_NonExistingId_ShouldNotThrowException()
+    [Fact]
+    public async Task DeletePaper_ExistingId_ShouldRemovePaper()
+    {
+        // Arrange
+        var createdPaper = await _paperService.CreatePaper(new CreatePaperDto
         {
-            // Act
-            await _paperService.DeletePaper(999); // Non-existing ID
+            Name = "A4 Paper",
+            Discontinued = false,
+            Stock = 100,
+            Price = 10.50
+        });
 
-            // Assert
-            var papers = await _paperService.GetAllPapers();
-            Assert.Empty(papers); // Should not throw exception and papers list should be empty
-        }
+        // Act
+        await _paperService.DeletePaper(createdPaper.Id);
+        var deletedPaper = await _paperService.GetPaperById(createdPaper.Id);
+
+        // Assert
+        Assert.Null(deletedPaper);
+    }
+
+    [Fact]
+    public async Task DeletePaper_NonExistingId_ShouldNotThrowException()
+    {
+        // Act
+        await _paperService.DeletePaper(999); // Non-existing ID
+
+        // Assert
+        var papers = await _paperService.GetAllPapers();
+        Assert.Empty(papers); // Should not throw exception and papers list should be empty
     }
 }

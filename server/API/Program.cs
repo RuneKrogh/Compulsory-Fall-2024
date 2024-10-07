@@ -20,26 +20,27 @@ public class Program
         builder.Services.AddOptionsWithValidateOnStart<AppOptions>()
             .Bind(builder.Configuration.GetSection(nameof(AppOptions)))
             .ValidateDataAnnotations();
-            //.Validate(options => new AppOptionsValidator().Validate(options).IsValid,
-                //$"{nameof(AppOptions)} validation failed");
+        //.Validate(options => new AppOptionsValidator().Validate(options).IsValid,
+        //$"{nameof(AppOptions)} validation failed");
         builder.Services.AddDbContext<DunderMifflinContext>((serviceProvider, options) =>
         {
             var appOptions = serviceProvider.GetRequiredService<IOptions<AppOptions>>().Value;
-            options.UseNpgsql(Environment.GetEnvironmentVariable("DbConnectionString") 
+            options.UseNpgsql(Environment.GetEnvironmentVariable("DbConnectionString")
                               ?? appOptions.DbConnectionString);
             options.EnableSensitiveDataLogging();
         });
-        
-        
-        builder.Services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateCustomerValidation>());
-        
+
+
+        builder.Services.AddFluentValidation(fv =>
+            fv.RegisterValidatorsFromAssemblyContaining<CreateCustomerValidation>());
+
         // Register services
         builder.Services.AddScoped<ICustomerService, CustomerService>();
         builder.Services.AddScoped<IOrderService, OrderService>();
         builder.Services.AddScoped<IOrderEntryService, OrderEntryService>();
         builder.Services.AddScoped<IPaperService, PaperService>();
         builder.Services.AddScoped<IPropertyService, PropertyService>();
-        
+
         // Register controllers and Swagger
         builder.Services.AddControllers();
 
@@ -68,5 +69,4 @@ public class Program
 
         app.Run();
     }
-    
 }

@@ -1,5 +1,5 @@
-﻿using Service.DTOs.Read;
-using Service.DTOs.Create;
+﻿using Service.DTOs.Create;
+using Service.DTOs.Read;
 
 namespace Service.Interfaces;
 

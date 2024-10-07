@@ -1,26 +1,19 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Service.DTOs.Create
+namespace Service.DTOs.Create;
+
+public class CreateOrderDto
 {
-    public class CreateOrderDto
-    {
-        [Required]
-        public DateTime OrderDate { get; set; }
+    [Required] public DateTime OrderDate { get; set; }
 
-        public DateOnly? DeliveryDate { get; set; }
+    public DateOnly? DeliveryDate { get; set; }
 
-        [Required]
-        [StringLength(50)]
-        public string Status { get; set; } = null!;
+    [Required] [StringLength(50)] public string Status { get; set; } = null!;
 
-        [Required]
-        public double TotalAmount { get; set; }
+    [Required] public double TotalAmount { get; set; }
 
-        public int? CustomerId { get; set; } // Optional, to link to a customer
+    public int? CustomerId { get; set; } // Optional, to link to a customer
 
-        // Add this property to accept order entries
-        [Required]
-        public List<CreateOrderEntryDto> OrderEntries { get; set; } = new List<CreateOrderEntryDto>();
-    }
+    // Add this property to accept order entries
+    [Required] public List<CreateOrderEntryDto> OrderEntries { get; set; } = new();
 }

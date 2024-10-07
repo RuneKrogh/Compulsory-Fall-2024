@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Models;
 
 [Table("properties")]
-public partial class Property
+public class Property
 {
-    [Key]
-    [Column("id")]
-    public int Id { get; set; }
+    [Key] [Column("id")] public int Id { get; set; }
 
     [Column("property_name")]
     [StringLength(255)]

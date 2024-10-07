@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using DataAccess.Models;
+﻿using DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess;
@@ -24,10 +22,7 @@ public partial class DunderMifflinContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Customer>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("customers_pkey");
-        });
+        modelBuilder.Entity<Customer>(entity => { entity.HasKey(e => e.Id).HasName("customers_pkey"); });
 
         modelBuilder.Entity<Order>(entity =>
         {
@@ -47,7 +42,8 @@ public partial class DunderMifflinContext : DbContext
 
             entity.HasOne(d => d.Order).WithMany(p => p.OrderEntries).HasConstraintName("order_entries_order_id_fkey");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.OrderEntries).HasConstraintName("order_entries_product_id_fkey");
+            entity.HasOne(d => d.Product).WithMany(p => p.OrderEntries)
+                .HasConstraintName("order_entries_product_id_fkey");
         });
 
         modelBuilder.Entity<Paper>(entity =>
@@ -78,10 +74,7 @@ public partial class DunderMifflinContext : DbContext
                     });
         });
 
-        modelBuilder.Entity<Property>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("properties_pkey");
-        });
+        modelBuilder.Entity<Property>(entity => { entity.HasKey(e => e.Id).HasName("properties_pkey"); });
 
         OnModelCreatingPartial(modelBuilder);
     }

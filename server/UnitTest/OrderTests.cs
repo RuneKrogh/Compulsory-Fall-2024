@@ -15,7 +15,7 @@ public class OrderTests : IDisposable
     {
         // Create a unique in-memory database for each test instance
         var options = new DbContextOptionsBuilder<DunderMifflinContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
 
         _context = new DunderMifflinContext(options);
@@ -43,8 +43,8 @@ public class OrderTests : IDisposable
             CustomerId = 1,
             OrderEntries = new List<CreateOrderEntryDto>
             {
-                new CreateOrderEntryDto { ProductId = 1, Quantity = 2 },
-                new CreateOrderEntryDto { ProductId = 2, Quantity = 3 }
+                new() { ProductId = 1, Quantity = 2 },
+                new() { ProductId = 2, Quantity = 3 }
             }
         };
 
@@ -74,7 +74,7 @@ public class OrderTests : IDisposable
             CustomerId = 1,
             OrderEntries = new List<CreateOrderEntryDto> // Invalid: no valid entries
             {
-                new CreateOrderEntryDto { ProductId = 0, Quantity = 0 } // Invalid entry
+                new() { ProductId = 0, Quantity = 0 } // Invalid entry
             }
         };
 
@@ -95,7 +95,7 @@ public class OrderTests : IDisposable
             CustomerId = 1,
             OrderEntries = new List<CreateOrderEntryDto>
             {
-                new CreateOrderEntryDto { ProductId = 1, Quantity = 2 }
+                new() { ProductId = 1, Quantity = 2 }
             }
         });
 
@@ -108,7 +108,7 @@ public class OrderTests : IDisposable
             CustomerId = 1,
             OrderEntries = new List<CreateOrderEntryDto>
             {
-                new CreateOrderEntryDto { ProductId = 2, Quantity = 1 }
+                new() { ProductId = 2, Quantity = 1 }
             }
         });
 
@@ -132,7 +132,7 @@ public class OrderTests : IDisposable
             CustomerId = 1,
             OrderEntries = new List<CreateOrderEntryDto>
             {
-                new CreateOrderEntryDto { ProductId = 1, Quantity = 2 }
+                new() { ProductId = 1, Quantity = 2 }
             }
         };
 

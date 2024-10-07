@@ -6,150 +6,154 @@ using Service.DTOs.Read;
 using Service.Implementations;
 using Service.Validation.PropertyValidation;
 
-namespace UnitTests
+namespace UnitTests;
+
+public class PropertyServiceTests : IDisposable
 {
-    public class PropertyServiceTests : IDisposable
+    private readonly DunderMifflinContext _context;
+    private readonly CreatePropertyValidation _createPropertyValidation;
+    private readonly PropertyService _propertyService;
+    private readonly UpdatePropertyValidation _updatePropertyValidation;
+
+    public PropertyServiceTests()
     {
-        private readonly DunderMifflinContext _context;
-        private readonly PropertyService _propertyService;
-        private readonly CreatePropertyValidation _createPropertyValidation;
-        private readonly UpdatePropertyValidation _updatePropertyValidation;
+        var options = new DbContextOptionsBuilder<DunderMifflinContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
 
-        public PropertyServiceTests()
+        _context = new DunderMifflinContext(options);
+        _createPropertyValidation = new CreatePropertyValidation();
+        _updatePropertyValidation = new UpdatePropertyValidation();
+        _propertyService = new PropertyService(_context, _createPropertyValidation, _updatePropertyValidation);
+    }
+
+    public void Dispose()
+    {
+        _context.Database.EnsureDeleted();
+        _context.Dispose();
+    }
+
+    [Fact]
+    public async Task CreateProperty_ValidData_ShouldCreateProperty()
+    {
+        // Arrange
+        var createPropertyDto = new CreatePropertyDto
         {
-            var options = new DbContextOptionsBuilder<DunderMifflinContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
+            PropertyName = "New Property"
+        };
 
-            _context = new DunderMifflinContext(options);
-            _createPropertyValidation = new CreatePropertyValidation();
-            _updatePropertyValidation = new UpdatePropertyValidation();
-            _propertyService = new PropertyService(_context, _createPropertyValidation, _updatePropertyValidation);
-        }
+        // Act
+        var propertyDto = await _propertyService.CreateProperty(createPropertyDto);
 
-        public void Dispose()
+        // Assert
+        Assert.NotNull(propertyDto);
+        Assert.Equal("New Property", propertyDto.PropertyName);
+        Assert.True(propertyDto.Id > 0); // Ensure that an ID is assigned
+    }
+
+    [Fact]
+    public async Task CreateProperty_InvalidData_ShouldThrowValidationException()
+    {
+        // Arrange
+        var createPropertyDto = new CreatePropertyDto
         {
-            _context.Database.EnsureDeleted();
-            _context.Dispose();
-        }
+            PropertyName = "" // Invalid property name (too short)
+        };
 
-        [Fact]
-        public async Task CreateProperty_ValidData_ShouldCreateProperty()
+        // Act & Assert
+        await Assert.ThrowsAsync<ValidationException>(async () =>
+            await _propertyService.CreateProperty(createPropertyDto));
+    }
+
+    [Fact]
+    public async Task GetAllProperties_ShouldReturnAllProperties()
+    {
+        // Arrange
+        await _propertyService.CreateProperty(new CreatePropertyDto { PropertyName = "Property 1" });
+        await _propertyService.CreateProperty(new CreatePropertyDto { PropertyName = "Property 2" });
+
+        // Act
+        var properties = await _propertyService.GetAllProperties();
+
+        // Assert
+        Assert.Equal(2, properties.Count());
+    }
+
+    [Fact]
+    public async Task GetPropertyById_ExistingId_ShouldReturnProperty()
+    {
+        // Arrange
+        var propertyDto = await _propertyService.CreateProperty(new CreatePropertyDto { PropertyName = "Property 1" });
+
+        // Act
+        var property = await _propertyService.GetPropertyById(propertyDto.Id);
+
+        // Assert
+        Assert.NotNull(property);
+        Assert.Equal(propertyDto.Id, property.Id);
+        Assert.Equal(propertyDto.PropertyName, property.PropertyName);
+    }
+
+    [Fact]
+    public async Task UpdateProperty_ValidData_ShouldUpdateProperty()
+    {
+        // Arrange
+        var propertyDto =
+            await _propertyService.CreateProperty(new CreatePropertyDto { PropertyName = "Old Property" });
+        var updatedPropertyDto = new PropertyDto
         {
-            // Arrange
-            var createPropertyDto = new CreatePropertyDto
-            {
-                PropertyName = "New Property"
-            };
+            Id = propertyDto.Id,
+            PropertyName = "Updated Property"
+        };
 
-            // Act
-            var propertyDto = await _propertyService.CreateProperty(createPropertyDto);
+        // Act
+        await _propertyService.UpdateProperty(updatedPropertyDto);
+        var updatedProperty = await _propertyService.GetPropertyById(propertyDto.Id);
 
-            // Assert
-            Assert.NotNull(propertyDto);
-            Assert.Equal("New Property", propertyDto.PropertyName);
-            Assert.True(propertyDto.Id > 0); // Ensure that an ID is assigned
-        }
+        // Assert
+        Assert.Equal("Updated Property", updatedProperty.PropertyName);
+    }
 
-        [Fact]
-        public async Task CreateProperty_InvalidData_ShouldThrowValidationException()
+    [Fact]
+    public async Task UpdateProperty_InvalidData_ShouldThrowValidationException()
+    {
+        // Arrange
+        var propertyDto =
+            await _propertyService.CreateProperty(new CreatePropertyDto { PropertyName = "Valid Property" });
+        var updatedPropertyDto = new PropertyDto
         {
-            // Arrange
-            var createPropertyDto = new CreatePropertyDto
-            {
-                PropertyName = "" // Invalid property name (too short)
-            };
+            Id = propertyDto.Id,
+            PropertyName = "" // Invalid property name (too short)
+        };
 
-            // Act & Assert
-            await Assert.ThrowsAsync<ValidationException>(async () => await _propertyService.CreateProperty(createPropertyDto));
-        }
+        // Act & Assert
+        await Assert.ThrowsAsync<ValidationException>(async () =>
+            await _propertyService.UpdateProperty(updatedPropertyDto));
+    }
 
-        [Fact]
-        public async Task GetAllProperties_ShouldReturnAllProperties()
-        {
-            // Arrange
-            await _propertyService.CreateProperty(new CreatePropertyDto { PropertyName = "Property 1" });
-            await _propertyService.CreateProperty(new CreatePropertyDto { PropertyName = "Property 2" });
+    [Fact]
+    public async Task DeleteProperty_ExistingId_ShouldRemoveProperty()
+    {
+        // Arrange
+        var propertyDto =
+            await _propertyService.CreateProperty(new CreatePropertyDto { PropertyName = "Property to Delete" });
 
-            // Act
-            var properties = await _propertyService.GetAllProperties();
+        // Act
+        await _propertyService.DeleteProperty(propertyDto.Id);
+        var deletedProperty = await _propertyService.GetPropertyById(propertyDto.Id);
 
-            // Assert
-            Assert.Equal(2, properties.Count());
-        }
+        // Assert
+        Assert.Null(deletedProperty);
+    }
 
-        [Fact]
-        public async Task GetPropertyById_ExistingId_ShouldReturnProperty()
-        {
-            // Arrange
-            var propertyDto = await _propertyService.CreateProperty(new CreatePropertyDto { PropertyName = "Property 1" });
+    [Fact]
+    public async Task DeleteProperty_NonExistingId_ShouldNotThrowException()
+    {
+        // Act
+        await _propertyService.DeleteProperty(999); // Non-existing ID
 
-            // Act
-            var property = await _propertyService.GetPropertyById(propertyDto.Id);
-
-            // Assert
-            Assert.NotNull(property);
-            Assert.Equal(propertyDto.Id, property.Id);
-            Assert.Equal(propertyDto.PropertyName, property.PropertyName);
-        }
-
-        [Fact]
-        public async Task UpdateProperty_ValidData_ShouldUpdateProperty()
-        {
-            // Arrange
-            var propertyDto = await _propertyService.CreateProperty(new CreatePropertyDto { PropertyName = "Old Property" });
-            var updatedPropertyDto = new PropertyDto
-            {
-                Id = propertyDto.Id,
-                PropertyName = "Updated Property"
-            };
-
-            // Act
-            await _propertyService.UpdateProperty(updatedPropertyDto);
-            var updatedProperty = await _propertyService.GetPropertyById(propertyDto.Id);
-
-            // Assert
-            Assert.Equal("Updated Property", updatedProperty.PropertyName);
-        }
-
-        [Fact]
-        public async Task UpdateProperty_InvalidData_ShouldThrowValidationException()
-        {
-            // Arrange
-            var propertyDto = await _propertyService.CreateProperty(new CreatePropertyDto { PropertyName = "Valid Property" });
-            var updatedPropertyDto = new PropertyDto
-            {
-                Id = propertyDto.Id,
-                PropertyName = "" // Invalid property name (too short)
-            };
-
-            // Act & Assert
-            await Assert.ThrowsAsync<ValidationException>(async () => await _propertyService.UpdateProperty(updatedPropertyDto));
-        }
-
-        [Fact]
-        public async Task DeleteProperty_ExistingId_ShouldRemoveProperty()
-        {
-            // Arrange
-            var propertyDto = await _propertyService.CreateProperty(new CreatePropertyDto { PropertyName = "Property to Delete" });
-
-            // Act
-            await _propertyService.DeleteProperty(propertyDto.Id);
-            var deletedProperty = await _propertyService.GetPropertyById(propertyDto.Id);
-
-            // Assert
-            Assert.Null(deletedProperty);
-        }
-
-        [Fact]
-        public async Task DeleteProperty_NonExistingId_ShouldNotThrowException()
-        {
-            // Act
-            await _propertyService.DeleteProperty(999); // Non-existing ID
-
-            // Assert
-            var properties = await _propertyService.GetAllProperties();
-            Assert.Empty(properties); // Should not throw exception and properties list should be empty
-        }
+        // Assert
+        var properties = await _propertyService.GetAllProperties();
+        Assert.Empty(properties); // Should not throw exception and properties list should be empty
     }
 }
