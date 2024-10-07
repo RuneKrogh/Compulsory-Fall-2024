@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
-using DataAccess.Models;
+using Service.DTOs.Read;
+using Service.DTOs.Create;
 
 namespace API.Controllers
 {
@@ -16,14 +17,14 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Paper>>> GetAllPapers()
+        public async Task<ActionResult<IEnumerable<PaperDto>>> GetAllPapers()
         {
             var papers = await _paperService.GetAllPapers();
             return Ok(papers);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Paper>> GetPaperById(int id)
+        public async Task<ActionResult<PaperDto>> GetPaperById(int id)
         {
             var paper = await _paperService.GetPaperById(id);
             if (paper == null) return NotFound();
@@ -31,7 +32,7 @@ namespace API.Controllers
         }
 
         [HttpGet("name/{name}")]
-        public async Task<ActionResult<Paper>> GetPaperByName(string name)
+        public async Task<ActionResult<PaperDto>> GetPaperByName(string name)
         {
             var paper = await _paperService.GetPaperByName(name);
             if (paper == null) return NotFound();
@@ -39,17 +40,17 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Paper>> AddPaper(Paper paper)
+        public async Task<ActionResult<PaperDto>> AddPaper(CreatePaperDto createPaperDto)
         {
-            await _paperService.CreatePaper(paper);
-            return CreatedAtAction(nameof(GetPaperById), new { id = paper.Id }, paper);
+            var createdPaper = await _paperService.CreatePaper(createPaperDto);
+            return CreatedAtAction(nameof(GetPaperById), new { id = createdPaper.Id }, createdPaper);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePaper(int id, Paper paper)
+        public async Task<IActionResult> UpdatePaper(int id, PaperDto paperDto)
         {
-            if (id != paper.Id) return BadRequest();
-            await _paperService.UpdatePaper(paper);
+            if (id != paperDto.Id) return BadRequest();
+            await _paperService.UpdatePaper(paperDto);
             return NoContent();
         }
 

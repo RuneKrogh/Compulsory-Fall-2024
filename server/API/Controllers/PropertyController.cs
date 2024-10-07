@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
-using DataAccess.Models;
+using Service.DTOs.Read;
+using Service.DTOs.Create;
 
 namespace API.Controllers
 {
@@ -16,14 +17,14 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Property>>> GetAllProperties()
+        public async Task<ActionResult<IEnumerable<PropertyDto>>> GetAllProperties()
         {
             var properties = await _propertyService.GetAllProperties();
             return Ok(properties);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Property>> GetPropertyById(int id)
+        public async Task<ActionResult<PropertyDto>> GetPropertyById(int id)
         {
             var property = await _propertyService.GetPropertyById(id);
             if (property == null) return NotFound();
@@ -31,17 +32,17 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Property>> CreateProperty(Property property)
+        public async Task<ActionResult<PropertyDto>> CreateProperty(CreatePropertyDto createPropertyDto)
         {
-            await _propertyService.CreateProperty(property);
-            return CreatedAtAction(nameof(GetPropertyById), new { id = property.Id }, property);
+            var createdProperty = await _propertyService.CreateProperty(createPropertyDto);
+            return CreatedAtAction(nameof(GetPropertyById), new { id = createdProperty.Id }, createdProperty);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProperty(int id, Property property)
+        public async Task<IActionResult> UpdateProperty(int id, PropertyDto propertyDto)
         {
-            if (id != property.Id) return BadRequest();
-            await _propertyService.UpdateProperty(property);
+            if (id != propertyDto.Id) return BadRequest();
+            await _propertyService.UpdateProperty(propertyDto);
             return NoContent();
         }
 

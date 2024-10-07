@@ -1,6 +1,8 @@
 ﻿using DataAccess;
 using DataAccess.Models;
 using Service.Interfaces;
+using Service.DTOs.Read;
+using Service.DTOs.Create;
 using Microsoft.EntityFrameworkCore;
 
 namespace Service.Implementations
@@ -14,42 +16,87 @@ namespace Service.Implementations
             _context = context;
         }
 
-        public async Task<IEnumerable<Paper>> GetAllPapers()
+        public async Task<IEnumerable<PaperDto>> GetAllPapers()
         {
-            // Retrieves all papers from the database
-            return await _context.Papers.ToListAsync();
-        }
-
-        public async Task<Paper?> GetPaperById(int id)
-        {
-            // Retrieves a specific paper by ID
-            return await _context.Papers.FindAsync(id);
-        }
-
-        public async Task<Paper?> GetPaperByName(string name)
-        {
-            // Retrieves a specific paper by its name
+            // Returns all papers as DTOs
             return await _context.Papers
-                .FirstOrDefaultAsync(p => p.Name == name);
+                .OrderBy(paper => paper.Id)
+                .Select(paper => new PaperDto
+                {
+                    Id = paper.Id,
+                    Name = paper.Name,
+                    Discontinued = paper.Discontinued,
+                    Stock = paper.Stock,
+                    Price = paper.Price
+                })
+                .ToListAsync();
         }
 
-        public async Task CreatePaper(Paper paper)
+        public async Task<PaperDto?> GetPaperById(int id)
         {
-            // Adds a new paper to the database
+            // Returns a paper DTO by ID
+            var paper = await _context.Papers.FindAsync(id);
+            return paper != null ? new PaperDto
+            {
+                Id = paper.Id,
+                Name = paper.Name,
+                Discontinued = paper.Discontinued,
+                Stock = paper.Stock,
+                Price = paper.Price
+            } : null;
+        }
+
+        public async Task<PaperDto?> GetPaperByName(string name)
+        {
+            // Returns a paper DTO by name
+            var paper = await _context.Papers.FirstOrDefaultAsync(p => p.Name == name);
+            return paper != null ? new PaperDto
+            {
+                Id = paper.Id,
+                Name = paper.Name,
+                Discontinued = paper.Discontinued,
+                Stock = paper.Stock,
+                Price = paper.Price
+            } : null;
+        }
+
+        public async Task<PaperDto> CreatePaper(CreatePaperDto createPaperDto)
+        {
+            // Creates a new paper from DTO
+            var paper = new Paper
+            {
+                Name = createPaperDto.Name,
+                Discontinued = createPaperDto.Discontinued,
+                Stock = createPaperDto.Stock,
+                Price = createPaperDto.Price
+            };
+
             await _context.Papers.AddAsync(paper);
             await _context.SaveChangesAsync();
+
+            // Return the created paper as a DTO
+            return PaperDto.FromPaper(paper);
         }
 
-        public async Task UpdatePaper(Paper paper)
+        public async Task UpdatePaper(PaperDto paperDto)
         {
-            // Updates an existing paper in the database
-            _context.Papers.Update(paper);
-            await _context.SaveChangesAsync();
+            // Updates an existing paper using DTO
+            var paper = await _context.Papers.FindAsync(paperDto.Id);
+            if (paper != null)
+            {
+                paper.Name = paperDto.Name;
+                paper.Discontinued = paperDto.Discontinued;
+                paper.Stock = paperDto.Stock;
+                paper.Price = paperDto.Price;
+
+                _context.Papers.Update(paper);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task DeletePaper(int id)
         {
-            // Deletes a paper from the database by ID
+            // Deletes a paper by ID
             var paper = await _context.Papers.FindAsync(id);
             if (paper != null)
             {

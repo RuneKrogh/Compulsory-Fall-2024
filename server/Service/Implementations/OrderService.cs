@@ -20,6 +20,7 @@ namespace Service.Implementations
         {
             // Retrieves all orders from the database and maps them to DTOs
             return await _context.Orders
+                .OrderBy(order => order.Id)
                 .Select(order => OrderDto.FromOrder(order)) // Use the FromOrder method for mapping
                 .ToListAsync();
         }

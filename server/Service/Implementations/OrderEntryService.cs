@@ -1,6 +1,8 @@
 ﻿using DataAccess;
 using DataAccess.Models;
 using Service.Interfaces;
+using Service.DTOs.Create;
+using Service.DTOs.Read;
 using Microsoft.EntityFrameworkCore;
 
 namespace Service.Implementations
@@ -14,28 +16,48 @@ namespace Service.Implementations
             _context = context;
         }
 
-        public async Task<IEnumerable<OrderEntry>> GetAllOrderEntries()
+        public async Task<IEnumerable<OrderEntryDto>> GetAllOrderEntries()
         {
-            // Retrieves all order entries from the database
-            return await _context.OrderEntries.ToListAsync();
+            // Retrieves all order entries from the database and maps them to DTOs
+            return await _context.OrderEntries
+                .Select(orderEntry => OrderEntryDto.FromOrderEntry(orderEntry)) // Use the DTO mapping method
+                .ToListAsync();
         }
 
-        public async Task<OrderEntry?> GetOrderEntryById(int id)
+        public async Task<OrderEntryDto?> GetOrderEntryById(int id)
         {
-            // Retrieves a specific order entry by ID
-            return await _context.OrderEntries.FindAsync(id);
+            // Retrieves a specific order entry by ID and maps it to a DTO
+            var orderEntry = await _context.OrderEntries.FindAsync(id);
+            return orderEntry != null ? OrderEntryDto.FromOrderEntry(orderEntry) : null; // Use the DTO mapping method
         }
 
-        public async Task CreateOrderEntry(OrderEntry orderEntry)
+        public async Task<OrderEntryDto> CreateOrderEntry(CreateOrderEntryDto createOrderEntryDto)
         {
-            // Adds a new order entry to the database
+            // Creates a new OrderEntry based on the DTO
+            var orderEntry = new OrderEntry
+            {
+                Quantity = createOrderEntryDto.Quantity,
+                ProductId = createOrderEntryDto.ProductId,
+                OrderId = createOrderEntryDto.OrderId
+            };
+
             await _context.OrderEntries.AddAsync(orderEntry);
             await _context.SaveChangesAsync();
+
+            // Return the created OrderEntry as a DTO
+            return OrderEntryDto.FromOrderEntry(orderEntry); // Use the DTO mapping method
         }
 
-        public async Task UpdateOrderEntry(OrderEntry orderEntry)
+        public async Task UpdateOrderEntry(OrderEntryDto orderEntryDto)
         {
             // Updates an existing order entry in the database
+            var orderEntry = await _context.OrderEntries.FindAsync(orderEntryDto.Id);
+            if (orderEntry == null) return; // Handle case appropriately
+
+            orderEntry.Quantity = orderEntryDto.Quantity;
+            orderEntry.ProductId = orderEntryDto.ProductId;
+            orderEntry.OrderId = orderEntryDto.OrderId;
+
             _context.OrderEntries.Update(orderEntry);
             await _context.SaveChangesAsync();
         }

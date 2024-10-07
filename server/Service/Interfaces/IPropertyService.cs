@@ -1,12 +1,15 @@
 ﻿using DataAccess.Models;
+using Service.DTOs.Read;
+using Service.DTOs.Create;
 
-namespace Service.Interfaces;
-
-public interface IPropertyService
+namespace Service.Interfaces
 {
-    Task<IEnumerable<Property>> GetAllProperties();
-    Task<Property?> GetPropertyById(int id);
-    Task CreateProperty(Property property);
-    Task UpdateProperty(Property property);
-    Task DeleteProperty(int id);
+    public interface IPropertyService
+    {
+        Task<IEnumerable<PropertyDto>> GetAllProperties();          // Returns all properties as DTOs
+        Task<PropertyDto?> GetPropertyById(int id);                // Returns a property DTO by ID
+        Task<PropertyDto> CreateProperty(CreatePropertyDto createPropertyDto);  // Creates a new property from DTO
+        Task UpdateProperty(PropertyDto propertyDto);               // Updates an existing property using DTO
+        Task DeleteProperty(int id);                                 // Deletes a property by ID
+    }
 }

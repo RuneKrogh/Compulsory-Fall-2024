@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
-using DataAccess.Models;
+using Service.DTOs.Read;
+using Service.DTOs.Create;
 
 namespace API.Controllers
 {
@@ -16,14 +17,14 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrderEntry>>> GetAllOrderEntries()
+        public async Task<ActionResult<IEnumerable<OrderEntryDto>>> GetAllOrderEntries()
         {
             var orderEntries = await _orderEntryService.GetAllOrderEntries();
             return Ok(orderEntries);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<OrderEntry>> GetOrderEntryById(int id)
+        public async Task<ActionResult<OrderEntryDto>> GetOrderEntryById(int id)
         {
             var orderEntry = await _orderEntryService.GetOrderEntryById(id);
             if (orderEntry == null) return NotFound();
@@ -31,17 +32,17 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<OrderEntry>> AddOrderEntry(OrderEntry orderEntry)
+        public async Task<ActionResult<OrderEntryDto>> CreateOrderEntry(CreateOrderEntryDto createOrderEntryDto)
         {
-            await _orderEntryService.CreateOrderEntry(orderEntry);
+            var orderEntry = await _orderEntryService.CreateOrderEntry(createOrderEntryDto);
             return CreatedAtAction(nameof(GetOrderEntryById), new { id = orderEntry.Id }, orderEntry);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateOrderEntry(int id, OrderEntry orderEntry)
+        public async Task<IActionResult> UpdateOrderEntry(int id, OrderEntryDto orderEntryDto)
         {
-            if (id != orderEntry.Id) return BadRequest();
-            await _orderEntryService.UpdateOrderEntry(orderEntry);
+            if (id != orderEntryDto.Id) return BadRequest();
+            await _orderEntryService.UpdateOrderEntry(orderEntryDto);
             return NoContent();
         }
 

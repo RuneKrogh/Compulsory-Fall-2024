@@ -19,18 +19,5 @@ namespace Service.DTOs.Create
         public double TotalAmount { get; set; }
 
         public int? CustomerId { get; set; } // Optional, to link to a customer
-
-        // Converts this DTO to an Order entity
-        public Order ToOrder()
-        {
-            return new Order
-            {
-                OrderDate = OrderDate,
-                DeliveryDate = DeliveryDate,
-                Status = Status,
-                TotalAmount = TotalAmount,
-                CustomerId = CustomerId
-            };
-        }
     }
 }

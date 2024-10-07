@@ -1,5 +1,4 @@
-﻿using System;
-using DataAccess.Models;
+﻿using DataAccess.Models;
 
 namespace Service.DTOs.Read
 {
