@@ -84,7 +84,7 @@ export default function ShoppingCart() {
                         {cartItems.map(item => (
                             <div key={item.id} className="card shadow-lg border rounded-md p-4">
                                 <h2 className="text-lg font-semibold">{item.name}</h2>
-                                <p className="text-gray-300">DKK {item.price.toFixed(2)} x {item.quantity}</p>
+                                <p className="text-gray-300">${item.price.toFixed(2)} x {item.quantity}</p>
                                 <button
                                     onClick={() => handleRemoveFromCart(item.id)}
                                     className="btn btn-danger mt-2"
@@ -95,7 +95,7 @@ export default function ShoppingCart() {
                         ))}
                     </div>
                     <div className="mt-4">
-                        <h2 className="text-xl font-semibold">Total: {getTotalPrice()} DKK</h2>
+                        <h2 className="text-xl font-semibold">Total: {getTotalPrice()}$</h2>
                         <button
                             onClick={handleCheckout}
                             className="btn btn mt-2"
