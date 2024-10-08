@@ -17,11 +17,13 @@ export default function Home() {
     const [colorFilter, setColorFilter] = useState<string>(""); // Single selection for color
     const [propertyFilter, setPropertyFilter] = useState<string>(""); // Single selection for property
 
+
     useEffect(() => {
         http.api.paperGetAllPapers().then(response => {
             setPapers(response.data);
         }).catch(error => {
             console.error('Error fetching products:', error);
+            toast.error("Error fetching papers. Please try again."); // Error toast for fetching papers
         });
     }, []);
 

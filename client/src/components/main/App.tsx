@@ -22,7 +22,12 @@ const App = () => {
 
     return (<>
         <Navigation/>
-        <Toaster position={"bottom-right"}/>
+        <Toaster position="bottom-right" toastOptions={{
+            style: {
+                background: '#232530', // Dark background
+                color: '#fff' // Light text color
+            },
+        }}/>
         <Routes>
             <Route path="/" element={<Home/>}/>
             <Route path="/shopping-cart" element={<ShoppingCart/>}/>

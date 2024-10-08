@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from "react";
-import {http} from "../main/http.ts";
-import {useAtom} from "jotai";
-import {ordersAtom} from "../../atoms/OrderAtom.tsx";
-import {customersAtom} from "../../atoms/CustomerAtom.tsx";
-import {orderPageAtom} from "../../atoms/PageAtom.tsx";
+import React, { useEffect, useState } from "react";
+import { http } from "../main/http.ts";
+import { useAtom } from "jotai";
+import { ordersAtom } from "../../atoms/OrderAtom.tsx";
+import { customersAtom } from "../../atoms/CustomerAtom.tsx";
+import { orderPageAtom } from "../../atoms/PageAtom.tsx";
 import Modal from "../modals/Modal.tsx";
+import toast from 'react-hot-toast'; // Import react-hot-toast
 
 export default function OrderList() {
     const [orders, setOrders] = useAtom(ordersAtom);
@@ -26,20 +27,24 @@ export default function OrderList() {
                 })
                 .catch(error => {
                     console.error('Error fetching customers:', error);
+                    toast.error('Failed to load customers'); // Toast for error loading customers
                 });
         }
 
-        http.api.orderGetAllOrders()
-            .then(response => {
-                setOrders(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching orders:', error);
-            });
-    }, [customers, setCustomers, setOrders]);
+        if (orders.length === 0) {
+            http.api.orderGetAllOrders()
+                .then(response => {
+                    setOrders(response.data);
+                })
+                .catch(error => {
+                    console.error('Error fetching orders:', error);
+                    toast.error('Failed to load orders'); // Toast for error loading orders
+                });
+        }
+
+    }, [setOrders]);
 
     const filteredOrders = orders.filter(order => {
-        // @ts-ignore
         return order.id.toString().includes(searchQuery);
     });
 
@@ -82,7 +87,6 @@ export default function OrderList() {
             status: selectedStatus,
         };
 
-        // @ts-ignore
         http.api.orderUpdateOrder(editingOrderId, updatedOrder)
             .then(response => {
                 const updatedOrders = orders.map(order =>
@@ -90,9 +94,11 @@ export default function OrderList() {
                 );
                 setOrders(updatedOrders); // Update the orders state with the modified order
                 setIsModalOpen(false); // Close the modal
+                toast.success('Order status updated successfully'); // Toast for successful update
             })
             .catch(error => {
                 console.error('Error updating order status:', error);
+                toast.error('Failed to update order status'); // Toast for error updating order
             });
     };
 

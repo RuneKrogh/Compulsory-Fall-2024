@@ -1,9 +1,10 @@
-import React, {useEffect, useState} from "react";
-import {http} from "../main/http.ts";
-import {customersAtom} from '../../atoms/CustomerAtom.tsx';
-import {useAtom} from "jotai";
-import {customerPageAtom} from "../../atoms/PageAtom.tsx";
+import React, { useEffect, useState } from "react";
+import { http } from "../main/http.ts";
+import { customersAtom } from '../../atoms/CustomerAtom.tsx';
+import { useAtom } from "jotai";
+import { customerPageAtom } from "../../atoms/PageAtom.tsx";
 import Modal from "../modals/Modal.tsx";
+import toast from 'react-hot-toast'; // Import react-hot-toast
 
 export default function CustomerList() {
     const [customers, setCustomers] = useAtom(customersAtom);
@@ -12,7 +13,7 @@ export default function CustomerList() {
     const [searchQuery, setSearchQuery] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newCustomer, setNewCustomer] = useState({ name: "", email: "", phone: "", address: "" });
-    const [editingCustomerId, setEditingCustomerId] = useState(null);
+    const [editingCustomerId, setEditingCustomerId] = useState<number | null>(null);
 
     // Fetch customers if the list is empty
     useEffect(() => {
@@ -23,9 +24,10 @@ export default function CustomerList() {
                 })
                 .catch(error => {
                     console.error('Error fetching customers:', error);
+                    toast.error('Failed to load customers'); // Toast for error loading customers
                 });
         }
-    }, [customers, setCustomers]);
+    }, [setCustomers]);
 
     // Filter customers based on search query
     const filteredCustomers = customers.filter(customer => {
@@ -61,17 +63,20 @@ export default function CustomerList() {
                 .then(response => {
                     const updatedCustomer = response.data; // Ensure API returns updated customer
 
-                    // If API does not return the full customer, manually update it with form data
+                    // Update customer in local state
                     const updatedCustomers = customers.map(customer =>
                         customer.id === editingCustomerId
-                            ? { ...customer, ...newCustomer } // Update customer in local state
+                            ? { ...customer, ...newCustomer }
                             : customer
                     );
                     setCustomers(updatedCustomers); // Update state to trigger re-render
                     setIsModalOpen(false); // Close the modal
+
+                    toast.success(`Customer updated successfully`); // Toast for successful update
                 })
                 .catch(error => {
                     console.error('Error updating customer:', error);
+                    toast.error('Failed to update customer'); // Toast for error updating customer
                 });
         } else {
             // Add new customer
@@ -79,9 +84,12 @@ export default function CustomerList() {
                 .then(response => {
                     setCustomers([...customers, response.data]); // Add the new customer to the existing list
                     setIsModalOpen(false); // Close the modal
+
+                    toast.success(`Customer added successfully`); // Toast for successful add
                 })
                 .catch(error => {
                     console.error('Error adding customer:', error);
+                    toast.error('Failed to add customer'); // Toast for error adding customer
                 });
         }
         // Reset form
@@ -98,9 +106,12 @@ export default function CustomerList() {
                     // Update customers state by filtering out the deleted customer
                     const updatedCustomers = customers.filter(customer => customer.id !== customerId);
                     setCustomers(updatedCustomers);
+
+                    toast.success('Customer deleted successfully'); // Toast for successful delete
                 })
                 .catch(error => {
                     console.error('Error deleting customer:', error);
+                    toast.error('Failed to delete customer'); // Toast for error deleting customer
                 });
         }
     };

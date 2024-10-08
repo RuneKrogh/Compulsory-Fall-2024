@@ -1,9 +1,10 @@
-import React, {useEffect, useState} from "react";
-import {http} from "../main/http.ts";
-import {useAtom} from "jotai";
-import {papersAtom} from "../../atoms/PapersAtom.tsx";
-import {customerPageAtom} from "../../atoms/PageAtom.tsx";
+import React, { useEffect, useState } from "react";
+import { http } from "../main/http.ts";
+import { useAtom } from "jotai";
+import { papersAtom } from "../../atoms/PapersAtom.tsx";
+import { customerPageAtom } from "../../atoms/PageAtom.tsx";
 import Modal from "../modals/Modal.tsx";
+import { toast } from "react-toastify"; // Import toast from react-toastify
 
 export default function PapersList() {
     const [papers, setPapers] = useAtom(papersAtom);
@@ -19,9 +20,11 @@ export default function PapersList() {
             http.api.paperGetAllPapers()
                 .then(response => {
                     setPapers(response.data);
+                    toast.success('Papers loaded successfully'); // Toast for successful load
                 })
                 .catch(error => {
                     console.error('Error fetching papers:', error);
+                    toast.error('Error loading papers'); // Toast for load error
                 });
         }
     }, [papers, setPapers]);
@@ -36,7 +39,7 @@ export default function PapersList() {
     const displayedPapers = filteredPapers.slice(indexOfFirstPaper, indexOfLastPaper);
     const totalPages = Math.ceil(filteredPapers.length / papersPerPage);
 
-    const handlePageChange = (pageNumber: number | ((prev: number) => number)) => {
+    const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
 
@@ -60,6 +63,7 @@ export default function PapersList() {
                 })
                 .catch(error => {
                     console.error('Error deleting paper:', error);
+                    toast.error('Error deleting paper'); // Toast for deletion error
                 });
         }
     };
@@ -71,9 +75,11 @@ export default function PapersList() {
                 .then(response => {
                     setPapers(papers.map(paper => paper.id === editingPaper ? { ...paper, ...newPaper } : paper));
                     setIsModalOpen(false);
+                    toast.success('Paper updated successfully'); // Toast for successful update
                 })
                 .catch(error => {
                     console.error('Error updating paper:', error);
+                    toast.error('Error updating paper'); // Toast for update error
                 });
         } else {
             // @ts-ignore
@@ -81,9 +87,11 @@ export default function PapersList() {
                 .then(response => {
                     setPapers([...papers, response.data]);
                     setIsModalOpen(false);
+                    toast.success('Paper added successfully'); // Toast for successful addition
                 })
                 .catch(error => {
                     console.error('Error adding paper:', error);
+                    toast.error('Error adding paper'); // Toast for addition error
                 });
         }
     };
@@ -116,7 +124,7 @@ export default function PapersList() {
                             <th className="text-xl px-1 py-1 text-center">Stock</th>
                             <th className="text-xl px-1 py-1 text-center">Price</th>
                             <th className="text-xl px-1 py-1 text-center">Discontinued</th>
-                            <th className="text-xl px-1 py-1 text-center">Properties</th> {/* New Column */}
+                            <th className="text-xl px-1 py-1 text-center">Properties</th>
                             <th className="text-xl px-1 py-1 text-center">Actions</th>
                         </tr>
                         </thead>
@@ -129,11 +137,11 @@ export default function PapersList() {
                                 <td className="px-1 py-1 text-center">{paper.price}</td>
                                 <td className="px-1 py-1 text-center">{paper.discontinued ? 'Yes' : 'No'}</td>
                                 <td className="px-1 py-1 text-center">
-                                    <ul>
-                                        {paper.properties && paper.properties.map((property) => (
-                                            <li key={property.id}>{property.propertyName}</li> // Displaying properties
-                                        ))}
-                                    </ul>
+                                    {paper.properties && paper.properties.length > 0 ? (
+                                        paper.properties.map(property => property.propertyName).join(', ')
+                                    ) : (
+                                        <span>No properties available</span>
+                                    )}
                                 </td>
                                 <td className="px-1 py-1 text-center">
                                     <div className="flex justify-center space-x-1">
@@ -161,7 +169,6 @@ export default function PapersList() {
                 <p>Loading papers...</p>
             )}
 
-            {/* Add/Edit Paper Modal */}
             <Modal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
@@ -204,7 +211,7 @@ export default function PapersList() {
                     <select
                         value={newPaper.discontinued ? "Yes" : "No"}
                         onChange={(e) => setNewPaper({ ...newPaper, discontinued: e.target.value === "Yes" })}
-                        className="select select-bordered w-full mb-4"
+                        className="input input-bordered w-full mb-4"
                     >
                         <option value="No">No</option>
                         <option value="Yes">Yes</option>
