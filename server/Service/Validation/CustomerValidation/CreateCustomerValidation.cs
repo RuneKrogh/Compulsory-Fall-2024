@@ -23,9 +23,7 @@ public class CreateCustomerValidation : AbstractValidator<CreateCustomerDto>
             .Matches(@"^(\+?\d{1,3}[- ]?)?(\(?\d{1,4}?\)?[- ]?)?(\d{1,4}[- ]?\d{1,4}[- ]?\d{1,9})$")
             .WithMessage("Phone number must be in a valid format, e.g., +45 1234 5678, 555-123-4567, or +1-555-123-4567.")
             .When(customer => !string.IsNullOrWhiteSpace(customer.Phone)); // Only validate if not null or empty
-
-
-
+        
         // Email validation
         RuleFor(customer => customer.Email)
             .EmailAddress()
